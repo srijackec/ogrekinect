@@ -122,13 +122,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\BaseApplication.h" />
+    <ClInclude Include="include\ControllableCharacter.h" />
+    <ClInclude Include="include\KinectController.h" />
     <ClInclude Include="include\OgreKinect.h" />
     <ClInclude Include="include\Stdafx.h" />
-    <ClInclude Include="include\Targetver.h" />
     <ClInclude Include="res\Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaseApplication.cpp" />
+    <ClCompile Include="src\ControllableCharacter.cpp" />
+    <ClCompile Include="src\KinectController.cpp" />
     <ClCompile Include="src\OgreKinect.cpp" />
   </ItemGroup>
   <ItemGroup>
