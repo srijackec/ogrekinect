@@ -9,43 +9,59 @@ Filename:    OgreKinect.cpp
 
 //-------------------------------------------------------------------------------------
 OgreKinect::OgreKinect(void)
-	: kinectManager(0)
+	:kinectController(0),
+	character(0)
 {
 
 }
 //-------------------------------------------------------------------------------------
 OgreKinect::~OgreKinect(void)
 {
-	if(kinectManager)
+	if(kinectController)
 	{
-		kinectManager->UnInitNui();
-		delete kinectManager;
+		kinectController->unInitController();
+		delete kinectController;
 	}
+
+	if(character) delete character;
 }
 
 //-------------------------------------------------------------------------------------
 void OgreKinect::createScene(void)
 {
-    Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
+    //Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
+    //Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    //headNode->attachObject(ogreHead);
 
-    Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    headNode->attachObject(ogreHead);
+	this->setUpKinect();
 
+	character = new ControllableCharacter();
+	character->setupCharacter(this->mSceneMgr, this->kinectController);
+	
     // Set ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
     // Create a light
     Ogre::Light* l = mSceneMgr->createLight("MainLight");
     l->setPosition(20,80,50);
-
-	this->setUpKinect();
 }
 
 //-------------------------------------------------------------------------------------
 void OgreKinect::setUpKinect()
+{	
+	kinectController = new KinectController();
+	kinectController->initController();
+}
+
+//-------------------------------------------------------------------------------------
+bool OgreKinect::frameRenderingQueued(const Ogre::FrameEvent& arg)
 {
-	kinectManager = new KinectManager();
-	kinectManager->InitNui();
+	if(!BaseApplication::frameRenderingQueued(arg)) return false;
+	
+	kinectController->updatePerFrame(arg.timeSinceLastFrame);
+	character->updatePerFrame(arg.timeSinceLastFrame);
+
+	return true;
 }
 
 

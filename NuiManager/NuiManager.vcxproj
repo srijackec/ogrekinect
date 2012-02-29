@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <AdditionalIncludeDirectories>include;C:\Program Files\Microsoft SDKs\Kinect\v1.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -94,24 +94,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\KinectManager.h" />
-    <ClInclude Include="include\NuiSkeletonFrame.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="include\NuiDataType.h" />
+    <ClInclude Include="include\Stdafx.h" />
+    <ClInclude Include="res\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="src\KinectManager.cpp" />
-    <ClCompile Include="Stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\Stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.ico" />
     <None Include="ReadMe.txt" />
+    <None Include="res\app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="app.rc" />
+    <ResourceCompile Include="res\app.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

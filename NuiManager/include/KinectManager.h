@@ -3,6 +3,8 @@
 #define __KinectSkeleton_h__
 
 #include "NuiApi.h"
+#include "NuiDataType.h"		// data type wrapper
+
 
 namespace NuiManager 
 {
@@ -14,15 +16,31 @@ namespace NuiManager
 
 		HRESULT InitNui(void);
 		void UnInitNui(void);
+		
 		size_t getDeviceCount(void);
+
+		bool trackColorImage(void);
+		bool trackDepthImage(void);
+		bool trackSkeleton(void);
+
+		NUI_SKELETON_DATA* getSkeleton(int index = 0);
 
 	protected:
 		INuiSensor*            nuiSensor;
 		BSTR                   instanceId;
 
+		NUI_IMAGE_FRAME*	nuiDepthFrame;
+		NUI_IMAGE_FRAME*	nuiColorFrame;	
+		NUI_SKELETON_DATA*	nuiSkeletonData;
+		NUI_SKELETON_FRAME*	nuiSkeletonFrame;
+
 	private:
-		//HANDLE        m_hThNuiProcess;
-		//HANDLE        m_hEvNuiProcessStop;
+		DWORD WINAPI            nuiProcessThread();
+		static DWORD WINAPI     nuiProcessThread(LPVOID pParam);
+
+	private:
+		HANDLE        hThNuiProcess;
+		HANDLE        hEvNuiProcessStop;
 
 		HANDLE        hNextDepthFrameEvent;
 		HANDLE        hNextColorFrameEvent;
@@ -30,6 +48,12 @@ namespace NuiManager
 		HANDLE        pDepthStreamHandle;
 		HANDLE        pVideoStreamHandle;
 
+		DWORD         lastDepthFPStime;
+		DWORD         lastSkeletonFoundTime;
+
+		int           depthFramesTotal;
+		int           lastDepthFramesTotal;
+		int			  frameRate;
 	};
 }
 

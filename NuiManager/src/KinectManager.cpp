@@ -7,7 +7,12 @@
 
 //-------------------------------------------------------------------------------------
 NuiManager::KinectManager::KinectManager(void)
-	:nuiSensor(0)
+	:nuiSensor(0),
+	lastDepthFPStime(0),
+	nuiColorFrame(0),
+	nuiDepthFrame(0),
+	nuiSkeletonFrame(0),
+	nuiSkeletonData(0)
 {
 }
 
@@ -20,6 +25,8 @@ NuiManager::KinectManager::~KinectManager(void)
 HRESULT NuiManager::KinectManager::InitNui(void)
 {	
 	HRESULT hr;
+
+	nuiSkeletonData = (NUI_SKELETON_DATA*)malloc(NUI_SKELETON_COUNT * sizeof (NUI_SKELETON_DATA));
 
 	if(!nuiSensor)
 	{
@@ -76,8 +83,8 @@ HRESULT NuiManager::KinectManager::InitNui(void)
 	if(FAILED(hr)) return hr;
 	
 	// Start the Nui processing thread
-	//m_hEvNuiProcessStop = CreateEvent( NULL, FALSE, FALSE, NULL );
-	//m_hThNuiProcess = CreateThread( NULL, 0, Nui_ProcessThread, this, 0, NULL );
+	hEvNuiProcessStop = CreateEvent( NULL, FALSE, FALSE, NULL );
+	hThNuiProcess = CreateThread( NULL, 0, nuiProcessThread, this, 0, NULL );
 		
 	return hr;
 }
@@ -85,35 +92,57 @@ HRESULT NuiManager::KinectManager::InitNui(void)
 //-------------------------------------------------------------------------------------
 void NuiManager::KinectManager::UnInitNui(void)
 {
-	if ( nuiSensor )
+	// delete data
+	if(nuiColorFrame) delete nuiColorFrame;
+	if(nuiDepthFrame) delete nuiDepthFrame;
+	if(nuiSkeletonFrame) delete nuiSkeletonFrame;
+	if(nuiSkeletonData) delete nuiSkeletonData;
+
+	// stop the Nui processing thread
+	if ( hEvNuiProcessStop != NULL )
 	{
-		nuiSensor->NuiShutdown( );
+		// Signal the thread
+		SetEvent(hEvNuiProcessStop);
+
+		// Wait for thread to stop
+		if ( hThNuiProcess != NULL )
+		{
+			WaitForSingleObject( hThNuiProcess, INFINITE );
+			CloseHandle( hThNuiProcess );
+		}
+		CloseHandle( hEvNuiProcessStop );
 	}
 
-	if ( hNextSkeletonEvent && ( hNextSkeletonEvent != INVALID_HANDLE_VALUE ) )
+	if (nuiSensor)
 	{
-		CloseHandle( hNextSkeletonEvent );
+		nuiSensor->NuiShutdown();
+	}
+
+	if (hNextSkeletonEvent && (hNextSkeletonEvent != INVALID_HANDLE_VALUE))
+	{
+		CloseHandle(hNextSkeletonEvent);
 		hNextSkeletonEvent = NULL;
 	}
 
-	if ( hNextDepthFrameEvent && ( hNextDepthFrameEvent != INVALID_HANDLE_VALUE ) )
+	if (hNextDepthFrameEvent && (hNextDepthFrameEvent != INVALID_HANDLE_VALUE))
 	{
-		CloseHandle( hNextDepthFrameEvent );
+		CloseHandle(hNextDepthFrameEvent);
 		hNextDepthFrameEvent = NULL;
 	}
 
-	if ( hNextColorFrameEvent && ( hNextColorFrameEvent != INVALID_HANDLE_VALUE ) )
+	if (hNextColorFrameEvent && (hNextColorFrameEvent != INVALID_HANDLE_VALUE))
 	{
-		CloseHandle( hNextColorFrameEvent );
+		CloseHandle(hNextColorFrameEvent);
 		hNextColorFrameEvent = NULL;
 	}
 
-	if ( nuiSensor )
+	if (nuiSensor)
 	{
 		nuiSensor->Release();
 		nuiSensor = NULL;
 	}   
 }
+
 
 //-------------------------------------------------------------------------------------
 size_t NuiManager::KinectManager::getDeviceCount(void)
@@ -122,4 +151,158 @@ size_t NuiManager::KinectManager::getDeviceCount(void)
 	NuiGetSensorCount(&result);
 	
 	return (size_t) result;
+}
+
+//-------------------------------------------------------------------------------------
+bool NuiManager::KinectManager::trackSkeleton(void)
+{
+	NUI_SKELETON_FRAME skeletonFrame = {0};
+	bool foundSkeleton = false;
+
+	if(SUCCEEDED(nuiSensor->NuiSkeletonGetNextFrame(0, &skeletonFrame)))
+	{
+		for ( int i = 0 ; i < NUI_SKELETON_COUNT ; i++ )
+		{
+			if( skeletonFrame.SkeletonData[i].eTrackingState == NUI_SKELETON_TRACKED ||
+				(skeletonFrame.SkeletonData[i].eTrackingState == NUI_SKELETON_POSITION_ONLY))
+			{
+				foundSkeleton = true;
+			}
+		}
+	}
+
+	// no skeletons!
+	if( !foundSkeleton ) { return false; }
+
+	// smooth out the skeleton data
+	HRESULT hr = nuiSensor->NuiTransformSmooth(&skeletonFrame, NULL);
+	if ( FAILED(hr) ) { return false; }
+
+	//NUI_SKELETON_FRAME temp = skeletonFrame;
+	//nuiSkeletonFrame = &temp;
+
+	for(int i = 0; i < NUI_SKELETON_COUNT; i++)
+		nuiSkeletonData[i] = skeletonFrame.SkeletonData[i];
+
+	lastSkeletonFoundTime = timeGetTime();
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------
+bool NuiManager::KinectManager::trackColorImage(void)
+{
+	NUI_IMAGE_FRAME imageFrame;
+	HRESULT hr = nuiSensor->NuiImageStreamGetNextFrame(pVideoStreamHandle, 0, &imageFrame);
+	if(FAILED(hr)) return false;
+
+	INuiFrameTexture* texture = imageFrame.pFrameTexture;
+	NUI_LOCKED_RECT lockedRect;
+	texture->LockRect(0, &lockedRect, NULL, 0);
+
+	if(lockedRect.Pitch != 0)
+	{
+		//NUI_IMAGE_FRAME temp = imageFrame;
+		//nuiColorFrame = &temp;
+	}
+
+	texture->UnlockRect(0);
+	nuiSensor->NuiImageStreamReleaseFrame(pVideoStreamHandle, &imageFrame);
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------
+bool NuiManager::KinectManager::trackDepthImage(void)
+{
+	NUI_IMAGE_FRAME imageFrame;
+	HRESULT hr = nuiSensor->NuiImageStreamGetNextFrame(pDepthStreamHandle, 0, &imageFrame);
+	if(FAILED(hr)) return false;
+
+	INuiFrameTexture* texture = imageFrame.pFrameTexture;
+	NUI_LOCKED_RECT lockedRect;
+	texture->LockRect(0, &lockedRect, NULL, 0);
+
+	if(lockedRect.Pitch != 0)
+	{
+		//NUI_IMAGE_FRAME temp = imageFrame;
+		//nuiDepthFrame = &temp;
+	}
+
+	texture->UnlockRect(0);
+	nuiSensor->NuiImageStreamReleaseFrame(pDepthStreamHandle, &imageFrame);
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------
+DWORD WINAPI NuiManager::KinectManager::nuiProcessThread(LPVOID pParam)
+{
+	KinectManager *manager = (KinectManager *) pParam;
+	return manager->nuiProcessThread();
+}
+
+//-------------------------------------------------------------------------------------
+// nuiProcessThread
+// Thread to handle Kinect processing
+//-------------------------------------------------------------------------------------
+DWORD WINAPI NuiManager::KinectManager::nuiProcessThread()
+{
+	const int numEvents = 4;
+	HANDLE hEvents[numEvents] = { hEvNuiProcessStop, hNextDepthFrameEvent, hNextColorFrameEvent, hNextSkeletonEvent };
+	int    nEventIdx;
+	DWORD  t;
+
+	lastDepthFPStime = timeGetTime();
+	lastSkeletonFoundTime = 0;
+	frameRate = 0;
+	
+	// thread loop
+	bool continueProcessing = true;
+	while(continueProcessing)
+	{
+		// wait for any of the events to be signaled
+		nEventIdx = WaitForMultipleObjects(numEvents, hEvents, FALSE, 100);
+
+		// process signal events
+		if(nEventIdx == WAIT_TIMEOUT)
+		{
+			continue;
+		}
+		else if(nEventIdx == WAIT_OBJECT_0)
+		{
+			continueProcessing = false;
+			continue;
+		}
+		else if(nEventIdx == (WAIT_OBJECT_0 + 1))
+		{
+			trackDepthImage();			
+			++depthFramesTotal;
+		}
+		else if(nEventIdx == (WAIT_OBJECT_0 + 2))
+		{
+			trackColorImage();
+		}
+		else if(nEventIdx == (WAIT_OBJECT_0 + 3))
+		{
+			trackSkeleton();
+		}
+
+		t = timeGetTime();
+		if((t - lastDepthFPStime) > 1000)
+		{
+			frameRate = ((depthFramesTotal - lastDepthFramesTotal) * 1000 + 500) / (t - lastDepthFPStime);
+			lastDepthFramesTotal = depthFramesTotal;
+			lastDepthFPStime = t;
+		}
+
+	}
+
+	return 0;
+}
+
+//-------------------------------------------------------------------------------------
+NUI_SKELETON_DATA* NuiManager::KinectManager::getSkeleton(int playerIndex)
+{
+	return &nuiSkeletonData[playerIndex];
 }
