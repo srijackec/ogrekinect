@@ -9,16 +9,16 @@
 NuiManager::KinectManager::KinectManager(void)
 	:nuiSensor(0),
 	lastDepthFPStime(0),
-	nuiColorFrame(0),
-	nuiDepthFrame(0),
-	nuiSkeletonFrame(0),
+	//nuiColorFrame(0),
+	//nuiDepthFrame(0),
+	//nuiSkeletonFrame(0),
 	nuiSkeletonData(0)
 {
 }
 
 //-------------------------------------------------------------------------------------
 NuiManager::KinectManager::~KinectManager(void)
-{	
+{
 }
 
 //-------------------------------------------------------------------------------------
@@ -30,10 +30,9 @@ HRESULT NuiManager::KinectManager::InitNui(void)
 
 	if(!nuiSensor)
 	{
-		HRESULT hr = NuiCreateSensorByIndex(0, &nuiSensor);
+		hr = NuiCreateSensorByIndex(0, &nuiSensor);
 		if(FAILED(hr)) return hr;
-
-		//SysFreeString(instanceId);
+		
 		instanceId = nuiSensor->NuiDeviceConnectionId();
 	}
 
@@ -93,10 +92,10 @@ HRESULT NuiManager::KinectManager::InitNui(void)
 void NuiManager::KinectManager::UnInitNui(void)
 {
 	// delete data
-	if(nuiColorFrame) delete nuiColorFrame;
-	if(nuiDepthFrame) delete nuiDepthFrame;
-	if(nuiSkeletonFrame) delete nuiSkeletonFrame;
-	if(nuiSkeletonData) delete nuiSkeletonData;
+	//if(nuiColorFrame)		delete nuiColorFrame;
+	//if(nuiDepthFrame)		delete nuiDepthFrame;
+	//if(nuiSkeletonFrame)	delete nuiSkeletonFrame;
+	if(nuiSkeletonData)		delete nuiSkeletonData;
 
 	// stop the Nui processing thread
 	if ( hEvNuiProcessStop != NULL )
@@ -113,10 +112,7 @@ void NuiManager::KinectManager::UnInitNui(void)
 		CloseHandle( hEvNuiProcessStop );
 	}
 
-	if (nuiSensor)
-	{
-		nuiSensor->NuiShutdown();
-	}
+	if (nuiSensor) { nuiSensor->NuiShutdown(); }
 
 	if (hNextSkeletonEvent && (hNextSkeletonEvent != INVALID_HANDLE_VALUE))
 	{
@@ -204,6 +200,7 @@ bool NuiManager::KinectManager::trackColorImage(void)
 	{
 		//NUI_IMAGE_FRAME temp = imageFrame;
 		//nuiColorFrame = &temp;
+		colorBuffer = (BYTE*) lockedRect.pBits;
 	}
 
 	texture->UnlockRect(0);
@@ -225,6 +222,8 @@ bool NuiManager::KinectManager::trackDepthImage(void)
 
 	if(lockedRect.Pitch != 0)
 	{
+		depthBuffer = (BYTE*) lockedRect.pBits;
+
 		//NUI_IMAGE_FRAME temp = imageFrame;
 		//nuiDepthFrame = &temp;
 	}
@@ -255,7 +254,7 @@ DWORD WINAPI NuiManager::KinectManager::nuiProcessThread()
 
 	lastDepthFPStime = timeGetTime();
 	lastSkeletonFoundTime = 0;
-	frameRate = 0;
+	//frameRate = 0;
 	
 	// thread loop
 	bool continueProcessing = true;
@@ -305,4 +304,16 @@ DWORD WINAPI NuiManager::KinectManager::nuiProcessThread()
 NUI_SKELETON_DATA* NuiManager::KinectManager::getSkeleton(int playerIndex)
 {
 	return &nuiSkeletonData[playerIndex];
+}
+
+//-------------------------------------------------------------------------------------
+BYTE* NuiManager::KinectManager::getColorBuffer()
+{
+	return colorBuffer;
+}
+
+//-------------------------------------------------------------------------------------
+BYTE* NuiManager::KinectManager::getDepthBuffer()
+{
+	return depthBuffer;
 }

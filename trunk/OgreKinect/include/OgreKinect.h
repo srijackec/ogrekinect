@@ -38,9 +38,9 @@ protected:
 
 protected:
     virtual void createScene(void);
-	void setUpKinect();
-
 	virtual bool frameRenderingQueued(const Ogre::FrameEvent& arg);
+
+	void setUpKinect();
 };
 
 #endif // #ifndef __OgreKinect_h_
