@@ -44,3 +44,23 @@ NUI_SKELETON_DATA* KinectController::getSkeletonData()
 {
 	return skeleton;
 }
+
+//-------------------------------------------------------------------------------------
+Ogre::Vector4 KinectController::convertToOgreVector4(Vector4 nuiVector)
+{
+	return Ogre::Vector4(nuiVector.x, nuiVector.y, nuiVector.z, nuiVector.w);
+}
+
+//-------------------------------------------------------------------------------------
+Ogre::Vector3 KinectController::convertToOgreVector3(Vector4 nuiVector)
+{
+	return Ogre::Vector3(nuiVector.x, nuiVector.y, nuiVector.z);
+}
+
+//-------------------------------------------------------------------------------------
+Ogre::Vector3 KinectController::getJointPosition(NuiManager::NuiJointIndex idx)
+{
+	return this->convertToOgreVector3(this->getSkeletonData()->SkeletonPositions[idx]);
+}
+
+//-------------------------------------------------------------------------------------

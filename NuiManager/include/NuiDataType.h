@@ -3,7 +3,7 @@
 namespace NuiManager 
 {
 	//-------------------------------------------------------------------------------------
-	typedef enum NuiSkeletonIndex
+	typedef enum NuiJointIndex
 	{
 		HIP_CENTER,
 		SPINE,
@@ -25,7 +25,7 @@ namespace NuiManager
 		KNEE_RIGHT,
 		ANKLE_RIGHT,
 		FOOT_RIGHT
-	} NuiSkeletonIndex;
+	} NuiJointIndex;
 
 	////-------------------------------------------------------------------------------------
 	//typedef enum NuiImageType

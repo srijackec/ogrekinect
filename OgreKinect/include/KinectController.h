@@ -16,8 +16,12 @@ public:
 	virtual void initController(void);
 	virtual void unInitController(void);
 	virtual void updatePerFrame(Ogre::Real elapsedTime);
+
+	Ogre::Vector4 convertToOgreVector4(Vector4 nuiVector);
+	Ogre::Vector3 convertToOgreVector3(Vector4 nuiVector);
 	
 	NUI_SKELETON_DATA* getSkeletonData();
+	Ogre::Vector3 getJointPosition(NuiManager::NuiJointIndex idx);
 
 protected:
 	KinectManager* kinectManager;
