@@ -1,5 +1,8 @@
 
 
+#ifndef __NuiDataType_h_
+#define __NuiDataType_h_
+
 namespace NuiManager 
 {
 	//-------------------------------------------------------------------------------------
@@ -62,12 +65,12 @@ namespace NuiManager
 	//	uint Height;
 	//} NuiSurfaceDesc;
 
-	////-------------------------------------------------------------------------------------
-	//typedef enum NuiSkeletonPositionTrackingState
-	//{	NOT_TRACKED,
-	//	INFERRED,
-	//	TRACKED 
-	//} NuiSkeletonPositionTrackingState;
+	//-------------------------------------------------------------------------------------
+	typedef enum NuiSkeletonPositionTrackingState
+	{	NOT_TRACKED = 0,
+		INFERRED = 1,
+		TRACKED = 2 
+	} NuiSkeletonPositionTrackingState;
 
 	////-------------------------------------------------------------------------------------
 	//typedef enum NuiSkeletonTrackingState
@@ -91,3 +94,5 @@ namespace NuiManager
 
 	//-------------------------------------------------------------------------------------
 }
+
+#endif

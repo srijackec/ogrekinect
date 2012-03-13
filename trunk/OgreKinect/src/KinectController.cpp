@@ -64,3 +64,7 @@ Ogre::Vector3 KinectController::getJointPosition(NuiManager::NuiJointIndex idx)
 }
 
 //-------------------------------------------------------------------------------------
+NuiSkeletonPositionTrackingState KinectController::getJointStatus(NuiManager::NuiJointIndex idx)
+{
+	return (NuiSkeletonPositionTrackingState)this->getSkeletonData()->eSkeletonPositionTrackingState[idx];
+}
