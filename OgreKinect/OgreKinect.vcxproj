@@ -53,7 +53,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -65,6 +65,7 @@
       <AdditionalIncludeDirectories>include;..\NuiManager\include;$(OGRE_HOME)\include;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\Samples\Common\include;$(OGRE_HOME)\boost_1_47;C:\Program Files\Microsoft SDKs\Kinect\v1.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
       <AdditionalOptions>/Zm256 %(AdditionalOptions)</AdditionalOptions>
+      <ErrorReporting>Prompt</ErrorReporting>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,6 +79,7 @@
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
+      <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Message>Copying exe to samples bin directory ...</Message>
@@ -123,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="include\BaseApplication.h" />
     <ClInclude Include="include\ControllableCharacter.h" />
+    <ClInclude Include="include\JointOrientationCalculator.h" />
     <ClInclude Include="include\KinectController.h" />
     <ClInclude Include="include\OgreKinect.h" />
     <ClInclude Include="include\Stdafx.h" />
@@ -131,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="src\BaseApplication.cpp" />
     <ClCompile Include="src\ControllableCharacter.cpp" />
+    <ClCompile Include="src\JointOrientationCalculator.cpp" />
     <ClCompile Include="src\KinectController.cpp" />
     <ClCompile Include="src\OgreKinect.cpp" />
   </ItemGroup>
