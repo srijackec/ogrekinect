@@ -18,19 +18,22 @@ namespace NuiManager
 		void setupController(KinectController* controller);
 
 		bool areNearCollinear(Ogre::Vector3 v1, Ogre::Vector3 v2);
-		Ogre::Matrix3 populateMatrix(Ogre::Vector3 xCol, Ogre::Vector3 yCol, Ogre::Vector3 zCol);
+		Ogre::Quaternion buildQuaternion(Ogre::Vector3 xAxis, Ogre::Vector3 yAxis, Ogre::Vector3 zAxis);
 
-		Ogre::Matrix3 makeMatrixFromX(Ogre::Vector3 v1);
-		Ogre::Matrix3 makeMatrixFromY(Ogre::Vector3 v1);
-		Ogre::Matrix3 makeMatrixFromZ(Ogre::Vector3 v1);
+		Ogre::Quaternion makeOrientationFromX(Ogre::Vector3 v1);
+		Ogre::Quaternion makeOrientationFromY(Ogre::Vector3 v1);
+		Ogre::Quaternion makeOrientationFromZ(Ogre::Vector3 v1);
 
-		Ogre::Matrix3 makeMatrixFromXY(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized);
-		Ogre::Matrix3 makeMatrixFromYX(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized);
-		Ogre::Matrix3 makeMatrixFromYZ(Ogre::Vector3 yUnnormalized, Ogre::Vector3 zUnnormalized);
+		Ogre::Quaternion makeOrientationFromXY(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized);
+		Ogre::Quaternion makeOrientationFromYX(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized);
+		Ogre::Quaternion makeOrientationFromYZ(Ogre::Vector3 yUnnormalized, Ogre::Vector3 zUnnormalized);
 
-		Ogre::Vector3 getPositionBetweenIndices(NuiManager::NuiJointIndex p1, NuiManager::NuiJointIndex p2);
+		Ogre::Vector3 getDirection(NuiManager::NuiJointIndex p1, NuiManager::NuiJointIndex p2);
 
-		Ogre::Matrix3 getSkeletonJointOrientation(NuiManager::NuiJointIndex idx);
+		Ogre::Quaternion getSkeletonJointOrientation(NuiManager::NuiJointIndex idx);
+
+	public:
+		std::vector<Ogre::Vector3> jointYAxes;	// debug only
 		
 	protected:
 		KinectController* controller;

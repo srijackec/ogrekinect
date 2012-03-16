@@ -90,9 +90,9 @@ void BaseApplication::createCamera(void)
 	mCamera = mSceneMgr->createCamera("PlayerCam");
 
 	// Position it at 500 in Z direction
-	mCamera->setPosition(Ogre::Vector3(0,0,30));
+	mCamera->setPosition(Ogre::Vector3(125, 40, 0));
 	// Look back along -Z
-	mCamera->lookAt(Ogre::Vector3(0,0,0));
+	mCamera->lookAt(Ogre::Vector3(0, 40,0));
 	mCamera->setNearClipDistance(5);
 
 	mCameraMan = new OgreBites::SdkCameraMan(mCamera);   // create a default camera controller
@@ -374,21 +374,16 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
 	{
 		mShutDown = true;
 	}
+	
+	mCameraMan->injectKeyDown(arg);
 
-	/*
-	if(arg.key == OIS::KC_UP || arg.key == OIS::KC_RIGHT || arg.key == OIS::KC_LEFT || arg.key == OIS::KC_DOWN )
-	{
-	}
-	else
-	{
-		mCameraMan->injectKeyDown(arg);
-	}
-	*/
 	return true;
 }
 
 bool BaseApplication::keyReleased( const OIS::KeyEvent &arg )
 {
+
+	mCameraMan->injectKeyUp(arg);
 	return true;
 }
 
