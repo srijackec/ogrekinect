@@ -67,17 +67,17 @@ namespace NuiManager
 
 	//-------------------------------------------------------------------------------------
 	typedef enum NuiSkeletonPositionTrackingState
-	{	NOT_TRACKED = 0,
-		INFERRED = 1,
-		TRACKED = 2 
+	{	JOINT_NOT_TRACKED = 0,
+		JOINT_INFERRED = 1,
+		JOINT_TRACKED = 2 
 	} NuiSkeletonPositionTrackingState;
 
 	////-------------------------------------------------------------------------------------
-	//typedef enum NuiSkeletonTrackingState
-	//{	NOT_TRACKED,
-	//	POSITION_ONLY,
-	//	TRACKED 
-	//} NuiSkeletonTrackingState;
+	typedef enum NuiSkeletonTrackingState
+	{	SKELETON_NOT_TRACKED = 0,
+		SKELETON_POSITION_ONLY = 1,
+		SKELETON_TRACKED = 2 
+	} NuiSkeletonTrackingState;
 
 	////-------------------------------------------------------------------------------------
 	//typedef struct NuiSkeletonData

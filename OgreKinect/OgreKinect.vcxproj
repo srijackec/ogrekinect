@@ -123,8 +123,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\AxisLines.h" />
     <ClInclude Include="include\BaseApplication.h" />
     <ClInclude Include="include\ControllableCharacter.h" />
+    <ClInclude Include="include\DynamicLines.h" />
+    <ClInclude Include="include\DynamicRenderable.h" />
     <ClInclude Include="include\JointOrientationCalculator.h" />
     <ClInclude Include="include\KinectController.h" />
     <ClInclude Include="include\OgreKinect.h" />
@@ -132,8 +135,11 @@
     <ClInclude Include="res\Resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AxisLines.cpp" />
     <ClCompile Include="src\BaseApplication.cpp" />
     <ClCompile Include="src\ControllableCharacter.cpp" />
+    <ClCompile Include="src\DynamicLines.cpp" />
+    <ClCompile Include="src\DynamicRenderable.cpp" />
     <ClCompile Include="src\JointOrientationCalculator.cpp" />
     <ClCompile Include="src\KinectController.cpp" />
     <ClCompile Include="src\OgreKinect.cpp" />

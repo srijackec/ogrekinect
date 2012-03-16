@@ -29,10 +29,6 @@ OgreKinect::~OgreKinect(void)
 //-------------------------------------------------------------------------------------
 void OgreKinect::createScene(void)
 {
-    //Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
-    //Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    //headNode->attachObject(ogreHead);
-
 	this->setUpKinect();
 
 	character = new ControllableCharacter();
@@ -44,6 +40,19 @@ void OgreKinect::createScene(void)
     // Create a light
     Ogre::Light* l = mSceneMgr->createLight("MainLight");
     l->setPosition(20,80,50);
+
+	// Fog
+	this->mSceneMgr->getCurrentViewport()->setBackgroundColour(Ogre::ColourValue(1.0f, 1.0f, 0.8f));
+	mSceneMgr->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(1.0f, 1.0f, 0.8f), 0, 150, 500);
+
+	// Floor
+	Ogre::MeshManager::getSingleton().createPlane("floor", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 1000, 1000, 10, 10, true, 1, 10, 10, Ogre::Vector3::UNIT_Z);
+
+	Ogre::Entity* floor = mSceneMgr->createEntity("Floor", "floor");
+	floor->setMaterialName("Examples/Rockwall");
+	floor->setCastShadows(false);
+	mSceneMgr->getRootSceneNode()->attachObject(floor);
 }
 
 //-------------------------------------------------------------------------------------

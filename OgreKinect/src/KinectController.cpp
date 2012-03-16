@@ -5,7 +5,11 @@
 //-------------------------------------------------------------------------------------
 KinectController::KinectController(void)
 	: kinectManager(0),
-	skeleton(0)
+	player1Skeleton(0),
+	player1Index(-1),
+	player2Index(-1),
+	player1State(NuiSkeletonTrackingState::SKELETON_NOT_TRACKED),
+	player2State(NuiSkeletonTrackingState::SKELETON_NOT_TRACKED)
 {
 }
 
@@ -36,13 +40,34 @@ void KinectController::unInitController(void)
 //-------------------------------------------------------------------------------------
 void KinectController::updatePerFrame(Ogre::Real elapsedTime)
 {
-	skeleton = kinectManager->getSkeleton();
+	
+
+	if(player1State == NuiSkeletonTrackingState::SKELETON_NOT_TRACKED)		// not tracked
+	{
+		// find new player
+		for(int i = 0; i < NUI_SKELETON_COUNT; i++)
+		{
+			player1Skeleton = kinectManager->getSkeleton(i);
+			if((NuiSkeletonTrackingState)player1Skeleton->eTrackingState == NuiSkeletonTrackingState::SKELETON_TRACKED)
+			{
+				std::cout << "index: " << i << "\n";
+				player1Index = i;
+				player1State = NuiSkeletonTrackingState::SKELETON_TRACKED;
+				break;
+			}
+		}
+	}
+	else	// tracked
+	{
+		player1Skeleton = kinectManager->getSkeleton(player1Index);
+		player1State = (NuiSkeletonTrackingState)player1Skeleton->eTrackingState;
+	}
 }
 
 //-------------------------------------------------------------------------------------
 NUI_SKELETON_DATA* KinectController::getSkeletonData()
 {
-	return skeleton;
+	return player1Skeleton;
 }
 
 //-------------------------------------------------------------------------------------

@@ -6,8 +6,7 @@
 #include "KinectController.h"
 #include "JointOrientationCalculator.h"
 #include "OgreMatrix3.h"
-
-//using namespace Ogre;
+#include "AxisLines.h"
 
 // Controllable Character
 class ControllableCharacter
@@ -19,24 +18,26 @@ public:
 
 	virtual void setupCharacter(Ogre::SceneManager* mSceneManager, KinectController* controller);
 	virtual void updatePerFrame(Ogre::Real elapsedTime);
-	//virtual void transformBone(Bone* bone);
 
 protected:
 	KinectController*  controller;
 	JointOrientationCalculator* jointCalc;
+
+	std::vector<AxisLines*> axisLines;		// debug
+	std::vector<AxisLines*> jointYLines;	// debug
+
+	bool showBoneOrientationAxes;
+	bool showJointYAxes;
 
 	Ogre::SceneManager *mSceneManager;	
 	Ogre::Entity* bodyEntity;
 	Ogre::SceneNode* bodyNode;
 	Ogre::Skeleton* skeleton;
 
-	void transformBone(Ogre::String boneName, NuiManager::NuiJointIndex childIdx, NuiManager::NuiJointIndex parentIdx);
-	Ogre::Vector3 getJointNormal(NuiManager::NuiJointIndex skeletonIdx);
-	Ogre::Radian getJointAngle(NuiManager::NuiJointIndex skeletonIdx);
-	
-	Ogre::Quaternion getJointOrientation(NuiManager::NuiJointIndex parentIdx, NuiManager::NuiJointIndex childIdx);
+protected:
+	void transformBone(Ogre::String boneName, NuiManager::NuiJointIndex jointIdx);
 
-	void setupBone(const Ogre::String& name);
+	void setupBone(const Ogre::String& name, NuiManager::NuiJointIndex idx);
 	void setupBone(const Ogre::String& name,const Ogre::Radian& angle, const Ogre::Vector3 axis);
 	void setupBone(const Ogre::String& name,const Ogre::Degree& yaw,const Ogre::Degree& pitch,const Ogre::Degree& roll);
 	void setupBone(const Ogre::String& name,const Ogre::Quaternion& q);

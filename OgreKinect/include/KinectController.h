@@ -19,14 +19,21 @@ public:
 
 	Ogre::Vector4 convertToOgreVector4(Vector4 nuiVector);
 	Ogre::Vector3 convertToOgreVector3(Vector4 nuiVector);
-	
+
 	NUI_SKELETON_DATA* getSkeletonData();
 	Ogre::Vector3 getJointPosition(NuiManager::NuiJointIndex idx);
 	NuiSkeletonPositionTrackingState getJointStatus(NuiManager::NuiJointIndex idx);
 
 protected:
+	int player1Index;
+	int player2Index;
+
+	NuiSkeletonTrackingState player1State;
+	NuiSkeletonTrackingState player2State;
+
+	NUI_SKELETON_DATA* player1Skeleton;
+
 	KinectManager* kinectManager;
-	NUI_SKELETON_DATA* skeleton;
 
 	Ogre::SceneManager *mSceneManager;
 };
