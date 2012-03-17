@@ -53,6 +53,18 @@ void OgreKinect::createScene(void)
 	floor->setMaterialName("Examples/Rockwall");
 	floor->setCastShadows(false);
 	mSceneMgr->getRootSceneNode()->attachObject(floor);
+
+	// Color Data	
+	/*texRenderTarget = Ogre::TextureManager::getSingleton().createManual("texRenderTarget", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		Ogre::TEX_TYPE_2D, 320, 240, 0, Ogre::PF_B8G8R8A8, Ogre::TU_DEFAULT);
+
+	Ogre::Rectangle2D *mMiniScreen = new Ogre::Rectangle2D(true);
+	mMiniScreen->setCorners(0.5f, -0.5f, 1.0f, -1.0f);
+	mMiniScreen->setBoundingBox(Ogre::AxisAlignedBox(-100000.0f * Ogre::Vector3::UNIT_SCALE, 100000.0f * Ogre::Vector3::UNIT_SCALE));
+
+	Ogre::SceneNode* miniScreenNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("MiniScreenNode");
+	miniScreenNode->attachObject(mMiniScreen);*/
+	
 }
 
 //-------------------------------------------------------------------------------------
@@ -70,47 +82,12 @@ bool OgreKinect::frameRenderingQueued(const Ogre::FrameEvent& arg)
 	kinectController->updatePerFrame(arg.timeSinceLastFrame);
 	character->updatePerFrame(arg.timeSinceLastFrame);
 
+	// Update Color Data
+	this->kinectController->showColorData(this->texRenderTarget);
+
 	return true;
 }
 
 
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include "windows.h"
-#endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#ifdef _DEBUG
-	int main()
-#else
-	INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
-#endif	
-#else
-	int main(int argc, char *argv[])
-#endif
-	{
-        // Create application object
-        OgreKinect app;
-
-        try {
-            app.go();
-        } catch( Ogre::Exception& e ) {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-            MessageBoxA( NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
-            std::cerr << "An exception has occured: " <<
-                e.getFullDescription().c_str() << std::endl;
-#endif
-        }
-
-        return 0;
-    }
-
-#ifdef __cplusplus
-}
-#endif

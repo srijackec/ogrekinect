@@ -65,6 +65,11 @@ void KinectController::updatePerFrame(Ogre::Real elapsedTime)
 }
 
 //-------------------------------------------------------------------------------------
+void  KinectController::showColorData(Ogre::TexturePtr texRenderTarget)
+{	
+}
+
+//-------------------------------------------------------------------------------------
 NUI_SKELETON_DATA* KinectController::getSkeletonData()
 {
 	return player1Skeleton;
