@@ -9,11 +9,10 @@
 NuiManager::KinectManager::KinectManager(void)
 	:nuiSensor(0),
 	lastDepthFPStime(0),
-	//nuiColorFrame(0),
-	//nuiDepthFrame(0),
-	//nuiSkeletonFrame(0),
 	nuiSkeletonData(0)
 {
+	colorBuffer = (BYTE*) malloc (640 * 480 * 4 * sizeof(BYTE));
+	depthBuffer = (BYTE*) malloc (320 * 240 * 4 * sizeof(BYTE));
 }
 
 //-------------------------------------------------------------------------------------
@@ -84,6 +83,8 @@ HRESULT NuiManager::KinectManager::InitNui(void)
 	// Start the Nui processing thread
 	hEvNuiProcessStop = CreateEvent( NULL, FALSE, FALSE, NULL );
 	hThNuiProcess = CreateThread( NULL, 0, nuiProcessThread, this, 0, NULL );
+
+	
 		
 	return hr;
 }
@@ -136,7 +137,11 @@ void NuiManager::KinectManager::UnInitNui(void)
 	{
 		nuiSensor->Release();
 		nuiSensor = NULL;
-	}   
+	}
+
+	// delete buffers
+	free(depthBuffer);
+	free(colorBuffer);
 }
 
 
@@ -193,19 +198,33 @@ bool NuiManager::KinectManager::trackColorImage(void)
 	if(FAILED(hr)) return false;
 
 	INuiFrameTexture* texture = imageFrame.pFrameTexture;
+
 	NUI_LOCKED_RECT lockedRect;
 	texture->LockRect(0, &lockedRect, NULL, 0);
 
 	if(lockedRect.Pitch != 0)
-	{
-		//NUI_IMAGE_FRAME temp = imageFrame;
-		//nuiColorFrame = &temp;
-		colorBuffer = (BYTE*) lockedRect.pBits;
+	{				
+		BYTE* pBits = (BYTE*) lockedRect.pBits;
+		int offset = 0;
+
+		for(size_t i = 0; i < 640; i++)
+		{
+			for (size_t j = 0; j < 480; j++)
+			{
+				colorBuffer[offset++] = pBits[0]; // B
+				colorBuffer[offset++] = pBits[1]; // G
+				colorBuffer[offset++] = pBits[2]; // R
+				colorBuffer[offset++] = 254;      // A
+
+				pBits += 4;
+			}
+		}
 	}
 
 	texture->UnlockRect(0);
-	nuiSensor->NuiImageStreamReleaseFrame(pVideoStreamHandle, &imageFrame);
 
+	nuiSensor->NuiImageStreamReleaseFrame(pVideoStreamHandle, &imageFrame);
+	
 	return true;
 }
 
@@ -217,20 +236,33 @@ bool NuiManager::KinectManager::trackDepthImage(void)
 	if(FAILED(hr)) return false;
 
 	INuiFrameTexture* texture = imageFrame.pFrameTexture;
+
 	NUI_LOCKED_RECT lockedRect;
 	texture->LockRect(0, &lockedRect, NULL, 0);
 
 	if(lockedRect.Pitch != 0)
 	{
-		depthBuffer = (BYTE*) lockedRect.pBits;
+		BYTE* pBits = (BYTE*) lockedRect.pBits;
+		/*int offset = 0;
 
-		//NUI_IMAGE_FRAME temp = imageFrame;
-		//nuiDepthFrame = &temp;
+		for(size_t i = 0; i < 320; i++)
+		{
+			for (size_t j = 0; j < 240; j++)
+			{
+				depthBuffer[offset++] = pBits[0]; // B
+				depthBuffer[offset++] = pBits[1]; // G
+				depthBuffer[offset++] = pBits[2]; // R
+				depthBuffer[offset++] = 254;	  // A
+
+				pBits += 4;
+			}
+		}*/
 	}
 
 	texture->UnlockRect(0);
-	nuiSensor->NuiImageStreamReleaseFrame(pDepthStreamHandle, &imageFrame);
 
+	nuiSensor->NuiImageStreamReleaseFrame(pDepthStreamHandle, &imageFrame);
+	
 	return true;
 }
 

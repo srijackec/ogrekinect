@@ -7,6 +7,10 @@
 #include "Ogre.h"
 #include "DynamicLines.h"
 
+/*
+	This class has purpose to display joint orientation (three orthogonal axes)
+	so it is easier to debug
+*/
 class AxisLines
 {
 public:

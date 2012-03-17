@@ -38,7 +38,7 @@ protected:
     virtual void chooseSceneManager(void);
     virtual void createCamera(void);
     virtual void createFrameListener(void);
-    virtual void createScene(void) = 0; // Override me!
+    virtual void createScene(void) = 0;
     virtual void destroyScene(void);
     virtual void createViewports(void);
     virtual void setupResources(void);
@@ -51,13 +51,14 @@ protected:
     // OIS::KeyListener
     virtual bool keyPressed( const OIS::KeyEvent &arg );
     virtual bool keyReleased( const OIS::KeyEvent &arg );
+
     // OIS::MouseListener
     virtual bool mouseMoved( const OIS::MouseEvent &arg );
     virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
     virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 
     // Ogre::WindowEventListener
-    //Adjust mouse clipping area
+    // Adjust mouse clipping area
     virtual void windowResized(Ogre::RenderWindow* rw);
     //Unattach OIS before window shutdown (very important under Linux)
     virtual void windowClosed(Ogre::RenderWindow* rw);

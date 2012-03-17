@@ -33,21 +33,21 @@ void AxisLines::setVisible(bool isXVisible, bool isYVisible, bool isZVisible)
 void AxisLines::initAxis(Ogre::String boneName, Ogre::Entity* entity, Ogre::SceneManager* mSceneManager)
 {
 
-	if(isXVisible)
+	if(isXVisible)	/* red */
 	{
 		xLine = new DynamicLines(Ogre::RenderOperation::OT_LINE_LIST);
 		entity->attachObjectToBone(boneName, xLine);
 		xLine->setMaterial(color1);
 	}
 
-	if(isYVisible)
+	if(isYVisible) /* green */
 	{
 		yLine = new DynamicLines(Ogre::RenderOperation::OT_LINE_LIST);
 		entity->attachObjectToBone(boneName, yLine);
 		yLine->setMaterial(color2);
 	}
 
-	if(isZVisible)
+	if(isZVisible) /* blue */
 	{
 		zLine = new DynamicLines(Ogre::RenderOperation::OT_LINE_LIST);
 		entity->attachObjectToBone(boneName, zLine);

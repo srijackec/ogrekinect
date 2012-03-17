@@ -5,6 +5,10 @@
 
 namespace NuiManager 
 {
+	/*
+		Enum data types so the system will not depend directly to Kinect API
+	*/
+
 	//-------------------------------------------------------------------------------------
 	typedef enum NuiJointIndex
 	{
@@ -29,42 +33,7 @@ namespace NuiManager
 		ANKLE_RIGHT,
 		FOOT_RIGHT
 	} NuiJointIndex;
-
-	////-------------------------------------------------------------------------------------
-	//typedef enum NuiImageType
-	//{
-	//	DEPTH_AND_PLAYER_INDEX,
-	//	COLOR,
-	//	COLOR_YUV,
-	//	COLOR_RAW_YUV,
-	//	DEPTH
-	//} NuiImageType;
-
-	////-------------------------------------------------------------------------------------
-	//typedef struct NuiImageViewArea
-	//{
-	//	int eDigitalZoom;
-	//	long lCenterX;
-	//	long lCenterY;
-	//} NuiImageViewArea;
-
-	////-------------------------------------------------------------------------------------
-	//typedef struct NuiTransformSmoothParameters
-	//{
-	//	float fSmoothing;
-	//	float fCorrection;
-	//	float fPrediction;
-	//	float fJitterRadius;
-	//	float fMaxDeviationRadius;
-	//} NuiTransformSmoothParameters;
-
-	////-------------------------------------------------------------------------------------
-	//typedef struct NuiSurfaceDesc
-	//{
-	//	uint Width;
-	//	uint Height;
-	//} NuiSurfaceDesc;
-
+	
 	//-------------------------------------------------------------------------------------
 	typedef enum NuiSkeletonPositionTrackingState
 	{	JOINT_NOT_TRACKED = 0,
@@ -72,27 +41,13 @@ namespace NuiManager
 		JOINT_TRACKED = 2 
 	} NuiSkeletonPositionTrackingState;
 
-	////-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
 	typedef enum NuiSkeletonTrackingState
 	{	SKELETON_NOT_TRACKED = 0,
 		SKELETON_POSITION_ONLY = 1,
 		SKELETON_TRACKED = 2 
 	} NuiSkeletonTrackingState;
 
-	////-------------------------------------------------------------------------------------
-	//typedef struct NuiSkeletonData
-	//{
-	//	NuiSkeletonTrackingState eTrackingState;
-	//	DWORD dwTrackingID;
-	//	DWORD dwEnrollmentIndex;
-	//	DWORD dwUserIndex;
-	//	Vector4 Position;
-	//	Vector4 SkeletonPositions[ 20 ];
-	//	NuiSkeletonPositionTrackingState eSkeletonPositionTrackingState[20];
-	//	DWORD dwQualityFlags;
-	//} NuiSkeletonData;
-
-	//-------------------------------------------------------------------------------------
 }
 
 #endif
