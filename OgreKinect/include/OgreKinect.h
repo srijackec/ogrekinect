@@ -35,6 +35,7 @@ public:
 protected:	
 	KinectController* kinectController;
 	ControllableCharacter* character;
+	Ogre::TexturePtr texRenderTarget;
 
 protected:
     virtual void createScene(void);

@@ -227,7 +227,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 		{
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::SHOULDER_LEFT);
-			orientation = this->makeOrientationFromYX(vx, vy);
+			orientation = this->makeOrientationFromXY(vx, vy);
 		}
 		break;
 
@@ -235,36 +235,39 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 		{
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::SHOULDER_RIGHT);
-			orientation = this->makeOrientationFromYX(vx, vy);
+			orientation = this->makeOrientationFromXY(vx, vy);
+			
 		}
 		break;
 
 	case NuiJointIndex::ELBOW_LEFT:			/*5*/
 		{
-			vx = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::WRIST_LEFT);
+			//vx = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::WRIST_LEFT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::SHOULDER_LEFT);
-			orientation = this->makeOrientationFromXY(vy, vx);
+			//orientation = this->makeOrientationFromYX(vx, vy);
+			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::ELBOW_RIGHT:		/*9*/
 		{
-			vx = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::WRIST_RIGHT);
+			//vx = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::WRIST_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::SHOULDER_RIGHT);
-			orientation = this->makeOrientationFromXY(vy, vx);
+			//orientation = this->makeOrientationFromYX(vy, vx);
+			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::WRIST_LEFT:			/*6*/
 		{
-			vy = this->getDirection(NuiJointIndex::HAND_LEFT,		NuiJointIndex::WRIST_LEFT);
+			vy = this->getDirection(NuiJointIndex::WRIST_LEFT,		NuiJointIndex::ELBOW_LEFT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::WRIST_RIGHT:		/*10*/
 		{
-			vy = this->getDirection(NuiJointIndex::HAND_RIGHT, NuiJointIndex::WRIST_RIGHT);
+			vy = this->getDirection(NuiJointIndex::WRIST_RIGHT, NuiJointIndex::ELBOW_RIGHT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
@@ -301,14 +304,14 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 
 	case NuiJointIndex::KNEE_LEFT:			/*13*/
 		{
-			vy = this->getDirection(NuiJointIndex::ANKLE_LEFT,	NuiJointIndex::KNEE_LEFT);
+			vy = this->getDirection(NuiJointIndex::KNEE_LEFT,	NuiJointIndex::HIP_LEFT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::KNEE_RIGHT:			/*17*/
 		{
-			vy = this->getDirection(NuiJointIndex::ANKLE_RIGHT,	NuiJointIndex::KNEE_RIGHT);
+			vy = this->getDirection(NuiJointIndex::KNEE_RIGHT,	NuiJointIndex::HIP_RIGHT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;

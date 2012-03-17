@@ -4,9 +4,10 @@ material Examples/Rockwall
 	{
 		pass
 		{
+		
 			texture_unit
 			{
-				texture rockwall.tga
+				texture steel.jpg
 			}
 		}
 	}

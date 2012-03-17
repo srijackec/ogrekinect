@@ -24,6 +24,8 @@ public:
 	Ogre::Vector3 getJointPosition(NuiManager::NuiJointIndex idx);
 	NuiSkeletonPositionTrackingState getJointStatus(NuiManager::NuiJointIndex idx);
 
+	void showColorData(Ogre::TexturePtr texRenderTarget);
+
 protected:
 	int player1Index;
 	int player2Index;
