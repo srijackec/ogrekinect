@@ -18,11 +18,6 @@ NuiManager::JointOrientationCalculator::~JointOrientationCalculator(void)
 void NuiManager::JointOrientationCalculator::setupController(KinectController* controller)
 {
 	this->controller = controller;
-
-	for(int a = 0; a < NUI_SKELETON_POSITION_COUNT; a++)	// debug
-	{
-		jointYAxes.push_back(Ogre::Vector3());
-	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -193,7 +188,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 
 			/* vy should be calculated by using HIP_CENTER and SPINE but the angle between them
 				is often too wide so the skinned model will have weird hip orientation */
-			//vy = this->getDirection(NuiJointIndex::HIP_CENTER,		NuiJointIndex::SPINE);
+			//vy = this->getDirection(NuiJointIndex::HIP_CENTER,	NuiJointIndex::SPINE);
 			vy = Ogre::Vector3::UNIT_Y;		
 
 			orientation = this->makeOrientationFromXY(vx, vy);
@@ -202,16 +197,17 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 
 	case NuiJointIndex::SPINE:				/*1*/
 		{
-			vy = this->getDirection(NuiJointIndex::SPINE,			NuiJointIndex::SHOULDER_CENTER);
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
+			vy = this->getDirection(NuiJointIndex::SPINE,			NuiJointIndex::SHOULDER_CENTER);
+			
 			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 
 	case NuiJointIndex::SHOULDER_CENTER:	/*2*/
 		{
-			vy = this->getDirection(NuiJointIndex::SHOULDER_CENTER, NuiJointIndex::HEAD);
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
+			vy = this->getDirection(NuiJointIndex::SHOULDER_CENTER, NuiJointIndex::HEAD);			
 			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
@@ -227,7 +223,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 		{
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::SHOULDER_LEFT);
-			orientation = this->makeOrientationFromXY(vx, vy);
+			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 
@@ -235,14 +231,14 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 		{
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::SHOULDER_RIGHT);
-			orientation = this->makeOrientationFromXY(vx, vy);
+			orientation = this->makeOrientationFromYX(vx, vy);
 			
 		}
 		break;
 
 	case NuiJointIndex::ELBOW_LEFT:			/*5*/
 		{
-			//vx = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::WRIST_LEFT);
+			//vx = this->getDirection(NuiJointIndex::ELBOW_LEFT,	NuiJointIndex::WRIST_LEFT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::SHOULDER_LEFT);
 			//orientation = this->makeOrientationFromYX(vx, vy);
 			orientation = this->makeOrientationFromY(vy);
@@ -251,7 +247,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 
 	case NuiJointIndex::ELBOW_RIGHT:		/*9*/
 		{
-			//vx = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::WRIST_RIGHT);
+			//vx = this->getDirection(NuiJointIndex::ELBOW_RIGHT,	NuiJointIndex::WRIST_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::SHOULDER_RIGHT);
 			//orientation = this->makeOrientationFromYX(vy, vx);
 			orientation = this->makeOrientationFromY(vy);
@@ -260,93 +256,97 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 
 	case NuiJointIndex::WRIST_LEFT:			/*6*/
 		{
-			vy = this->getDirection(NuiJointIndex::WRIST_LEFT,		NuiJointIndex::ELBOW_LEFT);
-			orientation = this->makeOrientationFromY(vy);
+			vz = Ogre::Vector3::UNIT_Z;
+			vy = this->getDirection(NuiJointIndex::WRIST_LEFT,		NuiJointIndex::ELBOW_LEFT);			
+			//orientation = this->makeOrientationFromY(vy);
+			orientation = this->makeOrientationFromYZ(vy, vz);
 		}
 		break;
 
 	case NuiJointIndex::WRIST_RIGHT:		/*10*/
 		{
-			vy = this->getDirection(NuiJointIndex::WRIST_RIGHT, NuiJointIndex::ELBOW_RIGHT);
-			orientation = this->makeOrientationFromY(vy);
+			vz = Ogre::Vector3::UNIT_Z;
+			vy = this->getDirection(NuiJointIndex::WRIST_RIGHT,		NuiJointIndex::ELBOW_RIGHT);
+			//orientation = this->makeOrientationFromY(vy);
+			orientation = this->makeOrientationFromYZ(vy, vz);
 		}
 		break;
 
 	case NuiJointIndex::HAND_LEFT:			/*7*/
 		{
-			vy = this->getDirection(NuiJointIndex::HAND_LEFT, NuiJointIndex::WRIST_LEFT);
+			vy = this->getDirection(NuiJointIndex::HAND_LEFT,		NuiJointIndex::WRIST_LEFT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::HAND_RIGHT:			/*11*/
 		{
-			vy = this->getDirection(NuiJointIndex::HAND_RIGHT, NuiJointIndex::WRIST_RIGHT);
+			vy = this->getDirection(NuiJointIndex::HAND_RIGHT,		NuiJointIndex::WRIST_RIGHT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::HIP_LEFT:			/*8*/
 		{
-			vy = this->getDirection(NuiJointIndex::KNEE_LEFT,	NuiJointIndex::HIP_LEFT);
-			vx = this->getDirection(NuiJointIndex::HIP_LEFT,	NuiJointIndex::HIP_RIGHT);
+			vy = this->getDirection(NuiJointIndex::KNEE_LEFT,		NuiJointIndex::HIP_LEFT);
+			vx = this->getDirection(NuiJointIndex::HIP_LEFT,		NuiJointIndex::HIP_RIGHT);
 			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 
 	case NuiJointIndex::HIP_RIGHT:			/*16*/
 		{
-			vy = this->getDirection(NuiJointIndex::KNEE_RIGHT,	NuiJointIndex::HIP_RIGHT);
-			vx = this->getDirection(NuiJointIndex::HIP_LEFT,	NuiJointIndex::HIP_RIGHT);
+			vy = this->getDirection(NuiJointIndex::KNEE_RIGHT,		NuiJointIndex::HIP_RIGHT);
+			vx = this->getDirection(NuiJointIndex::HIP_LEFT,		NuiJointIndex::HIP_RIGHT);
 			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 
 	case NuiJointIndex::KNEE_LEFT:			/*13*/
 		{
-			vy = this->getDirection(NuiJointIndex::KNEE_LEFT,	NuiJointIndex::HIP_LEFT);
+			vy = this->getDirection(NuiJointIndex::KNEE_LEFT,		NuiJointIndex::HIP_LEFT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::KNEE_RIGHT:			/*17*/
 		{
-			vy = this->getDirection(NuiJointIndex::KNEE_RIGHT,	NuiJointIndex::HIP_RIGHT);
+			vy = this->getDirection(NuiJointIndex::KNEE_RIGHT,		NuiJointIndex::HIP_RIGHT);
 			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::ANKLE_LEFT:			/*14*/
 		{
-			vy = this->getDirection(NuiJointIndex::ANKLE_LEFT, NuiJointIndex::KNEE_LEFT);
-			orientation = this->makeOrientationFromY(vy);
+			vy = this->getDirection(NuiJointIndex::ANKLE_LEFT,		NuiJointIndex::KNEE_LEFT);
+			vz = this->getDirection(NuiJointIndex::ANKLE_LEFT,		NuiJointIndex::FOOT_LEFT);
+			orientation = this->makeOrientationFromYZ(vy, vz);
 		}
 		break;
 
 	case NuiJointIndex::ANKLE_RIGHT:		/*18*/
 		{
-			vy = this->getDirection(NuiJointIndex::ANKLE_RIGHT, NuiJointIndex::ANKLE_RIGHT);
-			orientation = this->makeOrientationFromY(vy);
+			vy = this->getDirection(NuiJointIndex::ANKLE_RIGHT,		NuiJointIndex::KNEE_RIGHT);
+			vz = this->getDirection(NuiJointIndex::ANKLE_RIGHT,		NuiJointIndex::FOOT_RIGHT);
+			orientation = this->makeOrientationFromYZ(vy, vz);
 		}
 		break;
 
 	case NuiJointIndex::FOOT_LEFT:			/*15*/
 		{
-			vz = this->getDirection(NuiJointIndex::ANKLE_LEFT, NuiJointIndex::FOOT_LEFT);
+			vz = this->getDirection(NuiJointIndex::ANKLE_LEFT,		NuiJointIndex::FOOT_LEFT);
 			orientation = this->makeOrientationFromZ(vz);
 		}
 		break;
 	
 	case NuiJointIndex::FOOT_RIGHT:			/*19*/
 		{
-			vz = this->getDirection(NuiJointIndex::ANKLE_RIGHT, NuiJointIndex::FOOT_RIGHT);
+			vz = this->getDirection(NuiJointIndex::ANKLE_RIGHT,		NuiJointIndex::FOOT_RIGHT);
 			orientation = this->makeOrientationFromZ(vz);
 		}
 		break;
 
 	}
-
-	jointYAxes[(int)idx] = vy.normalisedCopy();	// debug
 
 	return orientation;
 }

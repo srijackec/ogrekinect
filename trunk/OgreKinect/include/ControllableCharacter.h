@@ -24,7 +24,6 @@ protected:
 	JointOrientationCalculator* jointCalc;
 
 	std::vector<AxisLines*> axisLines;		// debug
-	std::vector<AxisLines*> jointYLines;	// debug
 
 	bool showBoneOrientationAxes;
 	bool showJointYAxes;
@@ -41,10 +40,6 @@ protected:
 	void setupBone(const Ogre::String& name,const Ogre::Radian& angle, const Ogre::Vector3 axis);
 	void setupBone(const Ogre::String& name,const Ogre::Degree& yaw,const Ogre::Degree& pitch,const Ogre::Degree& roll);
 	void setupBone(const Ogre::String& name,const Ogre::Quaternion& q);
-
-	// for debug only
-	//std::vector<Ogre::Entity*> bodyEntities;
-	//std::vector<Ogre::SceneNode*> bodyNodes;
 
 };
 

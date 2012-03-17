@@ -6,7 +6,6 @@
 ControllableCharacter::ControllableCharacter(void)
 {
 	this->showBoneOrientationAxes = true;	// debug
-	this->showJointYAxes = false;			// debug
 }
 
 //-------------------------------------------------------------------------------------
@@ -26,7 +25,8 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 	this->bodyEntity = mSceneManager->createEntity("RobotBody", "robot.mesh");
 	this->bodyNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
 	this->bodyNode->attachObject(bodyEntity);
-
+		
+	// debug
 	for(int i = 0; i < this->bodyEntity->getNumSubEntities(); i++)
 	{
 		Ogre::SubEntity* sub = this->bodyEntity->getSubEntity(i);
@@ -34,21 +34,13 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 		mat->setSceneBlending(Ogre::SceneBlendType::SBT_TRANSPARENT_COLOUR);
 		mat->setCullingMode(Ogre::CullingMode::CULL_CLOCKWISE);
 	}
-
+	
 	skeleton = this->bodyEntity->getSkeleton();	
 	skeleton->setBlendMode(Ogre::ANIMBLEND_CUMULATIVE);
 
 	for(int a = 0; a < NUI_SKELETON_POSITION_COUNT && showBoneOrientationAxes; a++)	// debug
 	{ axisLines.push_back(new AxisLines()); }
-
-	for(int a = 0; a < NUI_SKELETON_POSITION_COUNT && showJointYAxes; a++)			// debug
-	{
-		AxisLines* aLine = new AxisLines();
-		aLine->setVisible(false, true, false);
-		aLine->color2 = "Line/Yellow";
-		jointYLines.push_back(aLine); 
-	}
-
+	
 	setupBone("Joint1",		NuiJointIndex::HIP_CENTER);
 	setupBone("Joint2",		NuiJointIndex::HIP_LEFT);
 	setupBone("Joint3",		NuiJointIndex::KNEE_LEFT);
@@ -104,15 +96,15 @@ void ControllableCharacter::transformBone(Ogre::String boneName, NuiManager::Nui
 	if(state == 2)
 	{
 		Ogre::Bone* bone = skeleton->getBone(boneName);
-		//Ogre::Quaternion qI = bone->getInitialOrientation();
+		Ogre::Quaternion qI = bone->getInitialOrientation();
 		Ogre::Quaternion newQ = jointCalc->getSkeletonJointOrientation(jointIdx);
 
 		bone->resetOrientation();
 		newQ = bone->convertWorldToLocalOrientation(newQ);
-		bone->setOrientation(newQ);
+		bone->setOrientation(newQ * qI);
 
-		if(showBoneOrientationAxes) axisLines[jointIdx]->updateLines(newQ.xAxis(), newQ.yAxis(), newQ.zAxis());									// debug
-		if(showJointYAxes) jointYLines[jointIdx]->updateLines(Ogre::Vector3::ZERO, jointCalc->jointYAxes[jointIdx], Ogre::Vector3::ZERO);		// debug	
+		Ogre::Quaternion resQ = bone->getOrientation();
+		if(showBoneOrientationAxes) axisLines[jointIdx]->updateLines(resQ.xAxis(), resQ.yAxis(), resQ.zAxis());		// debug	
 	}
 	else
 	{
@@ -127,10 +119,15 @@ void ControllableCharacter::setupBone(const Ogre::String& name, NuiJointIndex id
 	bone->setManuallyControlled(true);
 	bone->setInheritOrientation(false);
 
+	bone->resetToInitialState();
+
+	Ogre::Quaternion q;
+	q.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_Y);
+	bone->setOrientation(q);
+
 	bone->setInitialState();
 
 	if(showBoneOrientationAxes) axisLines[idx]->initAxis(name, this->bodyEntity, this->mSceneManager);		// debug
-	if(showJointYAxes) jointYLines[idx]->initAxis(name, this->bodyEntity, this->mSceneManager);				// debug
 }
 
 //-------------------------------------------------------------------------------------

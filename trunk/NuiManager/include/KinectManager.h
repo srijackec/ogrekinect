@@ -7,6 +7,9 @@
 
 namespace NuiManager 
 {
+	/*
+		Wrapper class to bridge Kinect API and other C++ program
+	*/
 	class KinectManager
 	{
 	public:
@@ -17,7 +20,6 @@ namespace NuiManager
 		void UnInitNui(void);
 		
 		size_t getDeviceCount(void);
-
 		
 		BYTE* getColorBuffer();
 		BYTE* getDepthBuffer();
@@ -27,9 +29,6 @@ namespace NuiManager
 		INuiSensor*         nuiSensor;
 		BSTR                instanceId;
 
-		//NUI_IMAGE_FRAME*	nuiDepthFrame;
-		//NUI_IMAGE_FRAME*	nuiColorFrame;
-		//NUI_SKELETON_FRAME*	nuiSkeletonFrame;
 		BYTE*				depthBuffer;
 		BYTE*				colorBuffer;
 		NUI_SKELETON_DATA*	nuiSkeletonData;

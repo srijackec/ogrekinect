@@ -15,13 +15,6 @@
 #include <memory.h>
 #include <tchar.h>
 
-// Direct2D Header Files
-//#include <d2d1.h>
-//#include <d2d1helper.h>
-
-// DirectWrite
-//#include <dwrite.h>
-
 #pragma comment ( lib, "winmm.lib" )
 #pragma comment ( lib, "d2d1.lib" )
 

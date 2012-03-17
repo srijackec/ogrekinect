@@ -7,6 +7,9 @@
 
 using namespace NuiManager;
 
+/*
+	Bridging kinect wrapper with C++ app
+*/
 class KinectController
 {
 public:
