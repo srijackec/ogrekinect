@@ -12,7 +12,7 @@ NuiManager::KinectManager::KinectManager(void)
 	nuiSkeletonData(0)
 {
 	colorBuffer = (BYTE*) malloc (640 * 480 * 4 * sizeof(BYTE));
-	depthBuffer = (BYTE*) malloc (320 * 240 * 4 * sizeof(BYTE));
+	depthBuffer = (BYTE*) malloc (640 * 480 * 4 * sizeof(BYTE));
 }
 
 //-------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ HRESULT NuiManager::KinectManager::InitNui(void)
 	// Depth Image
 	hr = nuiSensor->NuiImageStreamOpen(
 		HasSkeletalEngine(nuiSensor) ? NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX : NUI_IMAGE_TYPE_DEPTH,
-		NUI_IMAGE_RESOLUTION_320x240,
+		NUI_IMAGE_RESOLUTION_640x480,
 		0,
 		2,
 		hNextDepthFrameEvent,

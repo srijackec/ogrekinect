@@ -33,24 +33,32 @@ void OgreKinect::createScene(void)
 
 	character = new ControllableCharacter();
 	character->setupCharacter(this->mSceneMgr, this->kinectController);
-	
-    // Set ambient light
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-    // Create a light
-    Ogre::Light* l = mSceneMgr->createLight("MainLight");
-    l->setPosition(20,80,50);
+	// set shadow properties
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
+	mSceneMgr->setShadowColour(Ogre::ColourValue(0.5, 0.5, 0.5));
+	mSceneMgr->setShadowTextureSize(2048);
+	mSceneMgr->setShadowTextureCount(1);
+	
+	// use a small amount of ambient lighting
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3, 0.3, 0.3));
+
+	// add a bright light above the scene
+	Ogre::Light* light = mSceneMgr->createLight();
+	light->setType(Ogre::Light::LT_POINT);
+	light->setPosition(-100, 400, 200);
+	light->setSpecularColour(Ogre::ColourValue::White);
 
 	// Fog
-	this->mSceneMgr->getCurrentViewport()->setBackgroundColour(Ogre::ColourValue(1.0f, 1.0f, 0.8f));
-	mSceneMgr->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(1.0f, 1.0f, 0.8f), 0, 150, 500);
+	this->mSceneMgr->getCurrentViewport()->setBackgroundColour(Ogre::ColourValue(0.26f, 0.627f, 1.0f));
+	//mSceneMgr->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(1.0f, 1.0f, 0.8f), 0, 150, 500);
 
 	// Floor
 	Ogre::MeshManager::getSingleton().createPlane("floor", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 		Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 1000, 1000, 10, 10, true, 1, 10, 10, Ogre::Vector3::UNIT_Z);
 
 	Ogre::Entity* floor = mSceneMgr->createEntity("Floor", "floor");
-	floor->setMaterialName("Examples/Rockwall");
+	floor->setMaterialName("Examples/Steel");
 	floor->setCastShadows(false);
 	mSceneMgr->getRootSceneNode()->attachObject(floor);
 
