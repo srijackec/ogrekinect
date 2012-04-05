@@ -44,9 +44,9 @@ Ogre::Vector3 NuiManager::JointOrientationCalculator::getDirection(NuiManager::N
 //-------------------------------------------------------------------------------------
 Ogre::Quaternion NuiManager::JointOrientationCalculator::buildQuaternion(Ogre::Vector3 xAxis, Ogre::Vector3 yAxis, Ogre::Vector3 zAxis)
 {
-	Ogre::Matrix3 mat(xAxis.x, yAxis.x, zAxis.x,
-					  xAxis.y, yAxis.y, zAxis.y,
-					  xAxis.z, yAxis.z, zAxis.z);
+	Ogre::Matrix3 mat(xAxis.x, -yAxis.x, zAxis.x,
+					  -xAxis.y, yAxis.y, -zAxis.y,
+					  xAxis.z, -yAxis.z, zAxis.z);
 
 	Ogre::Quaternion q;
 	q.FromRotationMatrix(mat);
@@ -223,7 +223,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 		{
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_LEFT,		NuiJointIndex::SHOULDER_LEFT);
-			orientation = this->makeOrientationFromYX(vx, vy);
+			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
@@ -231,22 +231,23 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 		{
 			vx = this->getDirection(NuiJointIndex::SHOULDER_LEFT,	NuiJointIndex::SHOULDER_RIGHT);
 			vy = this->getDirection(NuiJointIndex::ELBOW_RIGHT,		NuiJointIndex::SHOULDER_RIGHT);
-			orientation = this->makeOrientationFromYX(vx, vy);
-			
+			orientation = this->makeOrientationFromY(vy);
 		}
 		break;
 
 	case NuiJointIndex::ELBOW_LEFT:			/*5*/
 		{
 			vy = this->getDirection(NuiJointIndex::WRIST_LEFT,		NuiJointIndex::ELBOW_LEFT);
-			orientation = this->makeOrientationFromY(vy);
+			vx = Ogre::Vector3::UNIT_X;
+			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 
 	case NuiJointIndex::ELBOW_RIGHT:		/*9*/
 		{
 			vy = this->getDirection(NuiJointIndex::WRIST_RIGHT,		NuiJointIndex::ELBOW_RIGHT);
-			orientation = this->makeOrientationFromY(vy);
+			vx = Ogre::Vector3::UNIT_X;
+			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 

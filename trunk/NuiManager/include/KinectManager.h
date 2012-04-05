@@ -18,9 +18,9 @@ namespace NuiManager
 
 		HRESULT InitNui(void);
 		void UnInitNui(void);
-		
+
 		size_t getDeviceCount(void);
-		
+
 		BYTE* getColorBuffer();
 		BYTE* getDepthBuffer();
 		NUI_SKELETON_DATA* getSkeleton(int index = 0);
@@ -37,7 +37,7 @@ namespace NuiManager
 		bool trackColorImage(void);
 		bool trackDepthImage(void);
 		bool trackSkeleton(void);
-		
+
 	private:
 		DWORD WINAPI            nuiProcessThread();
 		static DWORD WINAPI     nuiProcessThread(LPVOID pParam);

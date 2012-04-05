@@ -5,7 +5,7 @@
 //-------------------------------------------------------------------------------------
 ControllableCharacter::ControllableCharacter(void)
 {
-	this->showBoneOrientationAxes = false;	// debug
+	this->showBoneOrientationAxes = true;	// debug
 }
 
 //-------------------------------------------------------------------------------------
@@ -21,26 +21,52 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 
 	jointCalc = new JointOrientationCalculator();
 	jointCalc->setupController(controller);
+
+	entityName = "MainBody";
 			
-	this->bodyEntity = mSceneManager->createEntity("RobotBody", "robot.mesh");
+	this->bodyEntity = mSceneManager->createEntity(entityName, "bomberman.mesh");
 	this->bodyNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
 	this->bodyNode->attachObject(bodyEntity);
-		
+	this->bodyNode->scale(Ogre::Vector3(5));
+	this->bodyNode->translate(Ogre::Vector3(0, 25, 0));
+			
 	// debug
-	/* for(int i = 0; i < this->bodyEntity->getNumSubEntities(); i++)
+	for(int i = 0; i < this->bodyEntity->getNumSubEntities(); i++)
 	{
 		Ogre::SubEntity* sub = this->bodyEntity->getSubEntity(i);
 		Ogre::MaterialPtr mat = sub->getMaterial();
 		mat->setSceneBlending(Ogre::SceneBlendType::SBT_TRANSPARENT_COLOUR);
 		mat->setCullingMode(Ogre::CullingMode::CULL_CLOCKWISE);
-	} */
+	}
 	
 	skeleton = this->bodyEntity->getSkeleton();	
 	skeleton->setBlendMode(Ogre::ANIMBLEND_CUMULATIVE);
 
 	for(int a = 0; a < NUI_SKELETON_POSITION_COUNT && showBoneOrientationAxes; a++)	// debug
-	{ axisLines.push_back(new AxisLines()); }
+	{
+		AxisLines* axl = new AxisLines();
+		axisLines.push_back(axl);
+		axl->length = 3;
+
+	}
+
 	
+	/*setupBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
+	setupBone("HIP_LEFT",			NuiJointIndex::HIP_LEFT);
+	setupBone("KNEE_LEFT",			NuiJointIndex::KNEE_LEFT);
+	setupBone("HIP_RIGHT",			NuiJointIndex::HIP_RIGHT);
+	setupBone("KNEE_RIGHT",			NuiJointIndex::KNEE_RIGHT);
+	setupBone("SPINE",				NuiJointIndex::SPINE);
+	setupBone("SHOULDER_CENTER",	NuiJointIndex::SHOULDER_CENTER);
+	setupBone("HEAD",				NuiJointIndex::HEAD);*/
+	setupBone("SHOULDER_LEFT",		NuiJointIndex::SHOULDER_LEFT);
+	//setupBone("ELBOW_LEFT",			NuiJointIndex::ELBOW_LEFT);
+	//setupBone("WRIST_LEFT",		NuiJointIndex::WRIST_LEFT);
+	setupBone("SHOULDER_RIGHT",		NuiJointIndex::SHOULDER_RIGHT);
+	//setupBone("ELBOW_RIGHT",		NuiJointIndex::ELBOW_RIGHT);
+	//setupBone("WRIST_RIGHT",		NuiJointIndex::WRIST_RIGHT);
+	
+	/*
 	setupBone("Joint1",		NuiJointIndex::HIP_CENTER);
 	setupBone("Joint2",		NuiJointIndex::HIP_LEFT);
 	setupBone("Joint3",		NuiJointIndex::KNEE_LEFT);
@@ -59,13 +85,31 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 	setupBone("Joint16",	NuiJointIndex::SHOULDER_RIGHT);
 	setupBone("Joint17",	NuiJointIndex::ELBOW_RIGHT);
 	//setupBone("Joint18",	NuiJointIndex::WRIST_RIGHT);
+	*/
 }
 
 //-------------------------------------------------------------------------------------
 void ControllableCharacter::updatePerFrame(Ogre::Real elapsedTime)
 {
 	using namespace NuiManager;
+	
+	//transformBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
+	//transformBone("HIP_LEFT",			NuiJointIndex::HIP_LEFT);
+	//transformBone("KNEE_LEFT",			NuiJointIndex::KNEE_LEFT);
+	//transformBone("HIP_RIGHT",			NuiJointIndex::HIP_RIGHT);
+	//transformBone("KNEE_RIGHT",			NuiJointIndex::KNEE_RIGHT);
+	//transformBone("SPINE",				NuiJointIndex::SPINE);
+	//transformBone("SHOULDER_CENTER",	NuiJointIndex::SHOULDER_CENTER);
+	//transformBone("HEAD",				NuiJointIndex::HEAD);
+	transformBone("SHOULDER_LEFT",		NuiJointIndex::SHOULDER_LEFT);
+	//transformBone("ELBOW_LEFT",			NuiJointIndex::ELBOW_LEFT);
+	//transformBone("WRIST_LEFT",	NuiJointIndex::WRIST_LEFT);
+	transformBone("SHOULDER_RIGHT",	NuiJointIndex::SHOULDER_RIGHT);
+	//transformBone("ELBOW_RIGHT",	NuiJointIndex::ELBOW_RIGHT);
+	//transformBone("WRIST_RIGHT",	NuiJointIndex::WRIST_RIGHT);
+	
 
+	/*
 	transformBone("Joint1",		NuiJointIndex::HIP_CENTER);
 	transformBone("Joint2",		NuiJointIndex::HIP_LEFT);
 	transformBone("Joint3",		NuiJointIndex::KNEE_LEFT);
@@ -84,6 +128,7 @@ void ControllableCharacter::updatePerFrame(Ogre::Real elapsedTime)
 	transformBone("Joint16",	NuiJointIndex::SHOULDER_RIGHT);
 	transformBone("Joint17",	NuiJointIndex::ELBOW_RIGHT);
 	//transformBone("Joint18",	NuiJointIndex::WRIST_RIGHT);
+	*/
 
 }
 
@@ -114,12 +159,18 @@ void ControllableCharacter::setupBone(const Ogre::String& name, NuiJointIndex id
 {
 	Ogre::Bone* bone = bodyEntity->getSkeleton()->getBone(name);
 	bone->setManuallyControlled(true);
-	bone->setInheritOrientation(false);
 
-	bone->resetToInitialState();
+	if(name != "WRIST_RIGHT" && name != "WRIST_RIGHT")
+		bone->setInheritOrientation(false);
 
-	Ogre::Quaternion q;
-	q.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_Y);
+	//bone->resetToInitialState();
+	bone->resetOrientation();
+
+	//Ogre::Quaternion q;
+	//q.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_Y);
+	//bone->setOrientation(q);
+
+	Ogre::Quaternion q = Ogre::Quaternion::IDENTITY;
 	bone->setOrientation(q);
 
 	bone->setInitialState();
@@ -161,4 +212,10 @@ void ControllableCharacter::setupBone(const Ogre::String& name, const Ogre::Quat
 	bone->setOrientation(q);
 
 	bone->setInitialState();	
+}
+
+//-------------------------------------------------------------------------------------
+Ogre::SceneNode* ControllableCharacter::getEntityNode()
+{
+	return this->bodyNode;
 }
