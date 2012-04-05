@@ -18,6 +18,10 @@ public:
 
 	virtual void setupCharacter(Ogre::SceneManager* mSceneManager, KinectController* controller);
 	virtual void updatePerFrame(Ogre::Real elapsedTime);
+	Ogre::SceneNode* getEntityNode();
+
+public:
+	Ogre::String entityName;
 
 protected:
 	KinectController*  controller;
