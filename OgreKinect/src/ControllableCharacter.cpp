@@ -51,19 +51,19 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 	}
 
 	
-	/*setupBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
+	setupBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
 	setupBone("HIP_LEFT",			NuiJointIndex::HIP_LEFT);
 	setupBone("KNEE_LEFT",			NuiJointIndex::KNEE_LEFT);
 	setupBone("HIP_RIGHT",			NuiJointIndex::HIP_RIGHT);
 	setupBone("KNEE_RIGHT",			NuiJointIndex::KNEE_RIGHT);
 	setupBone("SPINE",				NuiJointIndex::SPINE);
 	setupBone("SHOULDER_CENTER",	NuiJointIndex::SHOULDER_CENTER);
-	setupBone("HEAD",				NuiJointIndex::HEAD);*/
+	setupBone("HEAD",				NuiJointIndex::HEAD);
 	setupBone("SHOULDER_LEFT",		NuiJointIndex::SHOULDER_LEFT);
-	//setupBone("ELBOW_LEFT",			NuiJointIndex::ELBOW_LEFT);
+	setupBone("ELBOW_LEFT",			NuiJointIndex::ELBOW_LEFT);
 	//setupBone("WRIST_LEFT",		NuiJointIndex::WRIST_LEFT);
 	setupBone("SHOULDER_RIGHT",		NuiJointIndex::SHOULDER_RIGHT);
-	//setupBone("ELBOW_RIGHT",		NuiJointIndex::ELBOW_RIGHT);
+	setupBone("ELBOW_RIGHT",		NuiJointIndex::ELBOW_RIGHT);
 	//setupBone("WRIST_RIGHT",		NuiJointIndex::WRIST_RIGHT);
 	
 	/*
@@ -93,19 +93,19 @@ void ControllableCharacter::updatePerFrame(Ogre::Real elapsedTime)
 {
 	using namespace NuiManager;
 	
-	//transformBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
-	//transformBone("HIP_LEFT",			NuiJointIndex::HIP_LEFT);
-	//transformBone("KNEE_LEFT",			NuiJointIndex::KNEE_LEFT);
-	//transformBone("HIP_RIGHT",			NuiJointIndex::HIP_RIGHT);
-	//transformBone("KNEE_RIGHT",			NuiJointIndex::KNEE_RIGHT);
-	//transformBone("SPINE",				NuiJointIndex::SPINE);
-	//transformBone("SHOULDER_CENTER",	NuiJointIndex::SHOULDER_CENTER);
-	//transformBone("HEAD",				NuiJointIndex::HEAD);
+	transformBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
+	transformBone("HIP_LEFT",			NuiJointIndex::HIP_LEFT);
+	transformBone("KNEE_LEFT",			NuiJointIndex::KNEE_LEFT);
+	transformBone("HIP_RIGHT",			NuiJointIndex::HIP_RIGHT);
+	transformBone("KNEE_RIGHT",			NuiJointIndex::KNEE_RIGHT);
+	transformBone("SPINE",				NuiJointIndex::SPINE);
+	transformBone("SHOULDER_CENTER",	NuiJointIndex::SHOULDER_CENTER);
+	transformBone("HEAD",				NuiJointIndex::HEAD);
 	transformBone("SHOULDER_LEFT",		NuiJointIndex::SHOULDER_LEFT);
-	//transformBone("ELBOW_LEFT",			NuiJointIndex::ELBOW_LEFT);
+	transformBone("ELBOW_LEFT",			NuiJointIndex::ELBOW_LEFT);
 	//transformBone("WRIST_LEFT",	NuiJointIndex::WRIST_LEFT);
 	transformBone("SHOULDER_RIGHT",	NuiJointIndex::SHOULDER_RIGHT);
-	//transformBone("ELBOW_RIGHT",	NuiJointIndex::ELBOW_RIGHT);
+	transformBone("ELBOW_RIGHT",	NuiJointIndex::ELBOW_RIGHT);
 	//transformBone("WRIST_RIGHT",	NuiJointIndex::WRIST_RIGHT);
 	
 
