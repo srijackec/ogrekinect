@@ -57,20 +57,20 @@ void OgreKinect::createScene(void)
 	this->mSceneMgr->getCurrentViewport()->setBackgroundColour(Ogre::ColourValue(0.26f, 0.627f, 1.0f));
 
 	// Bullet Physics
-	/*
+	
 	broadphase = new btDbvtBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	solver = new btSequentialImpulseConstraintSolver;
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,collisionConfiguration);
 	dynamicsWorld->setGravity(btVector3(0, -10, 0));
-	/*
-	/*
+	
+	
 	//create the character physical skeleton
 	ogreDisplay = new OgreDisplay(dynamicsWorld);
 	ragdoll = new SkeletonToRagdoll(mSceneMgr);
 	ragdoll->createRagdoll(dynamicsWorld, character->getEntityNode());
-	*/
+	
 	// Floor
 	Ogre::MeshManager::getSingleton().createPlane("floor", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 		Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 1000, 1000, 10, 10, true, 1, 10, 10, Ogre::Vector3::UNIT_Z);
@@ -81,7 +81,7 @@ void OgreKinect::createScene(void)
 	mSceneMgr->getRootSceneNode()->attachObject(floor);
 
 	// create the Bullet ground plane
-	/*
+	
 	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0), 1);
 	btTransform groundTransform;
 	groundTransform.setIdentity();
@@ -92,7 +92,7 @@ void OgreKinect::createScene(void)
 	groundRigidBody->setFriction(50.0f);
 	dynamicsWorld->addRigidBody(groundRigidBody);
 	ragdoll->addIgnoreEventObject(groundRigidBody);
-	*/
+	
 	// Color Data	
 	/*texRenderTarget = Ogre::TextureManager::getSingleton().createManual("texRenderTarget", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 		Ogre::TEX_TYPE_2D, 320, 240, 0, Ogre::PF_B8G8R8A8, Ogre::TU_DEFAULT);
@@ -124,7 +124,7 @@ bool OgreKinect::frameRenderingQueued(const Ogre::FrameEvent& arg)
 	// Update Color Data
 	this->kinectController->showColorData(this->texRenderTarget);
 
-	/*
+	
 	if (dynamicsWorld)
 	{
 		accumulator += arg.timeSinceLastFrame;
@@ -136,13 +136,13 @@ bool OgreKinect::frameRenderingQueued(const Ogre::FrameEvent& arg)
 			dynamicsWorld->performDiscreteCollisionDetection();
 			ogreDisplay->update();
 
+			ragdoll->update();
 			//std::string name = ragdoll->update();
-			
 			//if(name != "") name = name;
 		}
 
 	}
-	*/
+	
 	return true;
 }
 
