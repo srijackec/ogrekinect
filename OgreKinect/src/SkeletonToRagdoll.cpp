@@ -7,6 +7,7 @@ SkeletonToRagdoll::~SkeletonToRagdoll(void)
 {	
 }
 
+//-------------------------------------------------------------------------------------
 void SkeletonToRagdoll::createRagdoll( btDynamicsWorld* ownerWorld, Ogre::SceneNode* skeletonNode )
 {
 	steps = 0;
@@ -15,22 +16,22 @@ void SkeletonToRagdoll::createRagdoll( btDynamicsWorld* ownerWorld, Ogre::SceneN
 	this->skeletonNode = skeletonNode;
 
 	skeleton = dynamic_cast<Ogre::Entity*>(skeletonNode->getAttachedObject(0))->getSkeleton();
-	btVector3 positionOffset(skeletonNode->_getDerivedPosition().x,skeletonNode->_getDerivedPosition().y,skeletonNode->_getDerivedPosition().z);
+	btVector3 positionOffset(skeletonNode->_getDerivedPosition().x, skeletonNode->_getDerivedPosition().y, skeletonNode->_getDerivedPosition().z);
 
 	setBone(skeleton->getRootBone());
 }
 
+//-------------------------------------------------------------------------------------
 btRigidBody* SkeletonToRagdoll::localCreateRigidBody (btScalar mass, const btTransform& startTransform, btCollisionShape* shape)
 {
 	bool isDynamic = (mass != 0.f);
 
-	btVector3 localInertia(0,0,0);
-	if (isDynamic)
-		shape->calculateLocalInertia(mass,localInertia);
+	btVector3 localInertia(0, 0, 0);
+	if (isDynamic) shape->calculateLocalInertia(mass, localInertia);
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,myMotionState,shape,localInertia);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
 
 	m_ownerWorld->addRigidBody(body);
@@ -38,49 +39,53 @@ btRigidBody* SkeletonToRagdoll::localCreateRigidBody (btScalar mass, const btTra
 	return body;
 }
 
+//-------------------------------------------------------------------------------------
 std::string SkeletonToRagdoll::update()
 {
 	//currAnimation = anim;
 	resetAfterOffset();
 	
-	for(int i=0; i < skeleton->getNumBones(); i++)
+	for(int i = 0; i < skeleton->getNumBones(); i++)
 	{
-		btVector3 bonePosition = btVector3(btBones[i].second->_getDerivedPosition().x,btBones[i].second->_getDerivedPosition().y,btBones[i].second->_getDerivedPosition().z);
+		btVector3 bonePosition = btVector3(btBones[i].second->_getDerivedPosition().x, btBones[i].second->_getDerivedPosition().y, btBones[i].second->_getDerivedPosition().z);
 		Ogre::Vector3 bonePos = skeletonNode->_getDerivedOrientation() * btBones[i].second->_getDerivedPosition() * scale + skeletonNode->_getDerivedPosition();
 		btTransform tr;
 		tr.setIdentity();
+
 		if(i>0)
 		{
 			
-			Ogre::Vector3 parentBonePos = skeletonNode->_getDerivedOrientation()*btBones[i].second->getParent()->_getDerivedPosition()*scale+skeletonNode->_getDerivedPosition();
+			Ogre::Vector3 parentBonePos = skeletonNode->_getDerivedOrientation() * btBones[i].second->getParent()->_getDerivedPosition() * scale+skeletonNode->_getDerivedPosition();
 			Ogre::Vector3 boneOrient = bonePos-parentBonePos;
 			Ogre::Vector3 boneFinalPos = parentBonePos.midPoint(bonePos);
-			Ogre::Quaternion boneFinalRotation = boneOrient.normalisedCopy().getRotationTo(Ogre::Vector3(0,0,-1)).Inverse();
+			Ogre::Quaternion boneFinalRotation = boneOrient.normalisedCopy().getRotationTo(Ogre::Vector3(0, 0, -1)).Inverse();
 
 			debugBone[i]->_setDerivedPosition(boneFinalPos);
 			debugBone[i]->_setDerivedOrientation(boneFinalRotation);
-			tr.setOrigin(btVector3(boneFinalPos.x,boneFinalPos.y,boneFinalPos.z));
-			tr.setRotation(btQuaternion(boneFinalRotation.getYaw().valueRadians(),boneFinalRotation.getPitch().valueRadians(),boneFinalRotation.getRoll().valueRadians()));
+			tr.setOrigin(btVector3(boneFinalPos.x, boneFinalPos.y, boneFinalPos.z));
+			tr.setRotation(btQuaternion(boneFinalRotation.getYaw().valueRadians(),boneFinalRotation.getPitch().valueRadians(), boneFinalRotation.getRoll().valueRadians()));
 		}
 		else
 		{
 			debugBone[i]->_setDerivedPosition(bonePos);
 			tr.setOrigin(btVector3(bonePos.x,bonePos.y,bonePos.z));
 		}
+
+		
+
 		btBones[i].first->setWorldTransform(tr);
 
 	}
 	
 	//currAnimation->addTime(0.001);
-
-	for(int i=0; i < skeleton->getNumBones(); i++)
-	{
-		skeleton->getBone(i)->setManuallyControlled(false);
-	}
+	//for(int i=0; i < skeleton->getNumBones(); i++)
+	//{
+	//	skeleton->getBone(i)->setManuallyControlled(false);
+	//}
 
 	int numManifolds = m_ownerWorld->getDispatcher()->getNumManifolds();
 
-	for (int i=0;i<numManifolds;i++)
+	for (int i = 0; i < numManifolds; i++)
 	{
 		btPersistentManifold* contactManifold =  m_ownerWorld->getDispatcher()->getManifoldByIndexInternal(i);
 		btRigidBody* AB = static_cast<btRigidBody*>(contactManifold->getBody0());
@@ -186,6 +191,8 @@ std::string SkeletonToRagdoll::update()
 	
 	return "";
 }
+
+//-------------------------------------------------------------------------------------
 void SkeletonToRagdoll::resetAfterOffset()
 {
 	for(int i=bonesToReset.size()-1; i>=0;i--)
@@ -204,26 +211,22 @@ void SkeletonToRagdoll::resetAfterOffset()
 	}
 	
 }
+
+//-------------------------------------------------------------------------------------
 void SkeletonToRagdoll::setBone(Ogre::Bone* _bone, btRigidBody* parentBone) 
 {
 	btScalar size;
 
-	std::cout <<  "------------------" << _bone->getName() << "--------------\n";
-
-
-	if(_bone!=skeleton->getRootBone())
-	{
-		size = btScalar((_bone->_getDerivedPosition()*scale).distance(_bone->getParent()->_getDerivedPosition()*scale));
-	}
+	if(_bone!=skeleton->getRootBone()) size = btScalar((_bone->_getDerivedPosition() * scale).distance(_bone->getParent()->_getDerivedPosition()*scale));
 	else size = 1;
 
-	Ogre::Entity* boneEnt = mSceneMgr->createEntity(_bone->getName(),"sphere.mesh");
+	Ogre::Entity* boneEnt = mSceneMgr->createEntity(_bone->getName(), "sphere.mesh");
 	Ogre::SceneNode* boneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(_bone->getName());
 	boneNode->attachObject(boneEnt);
-	boneNode->setScale(1,1,size/2);
+	boneNode->setScale(1, 1, size);
 	boneNode->setPosition(_bone->_getDerivedPosition()*scale);
 
-	btCollisionShape* shape = new btCapsuleShapeZ(btScalar(2), size/2);
+	btCollisionShape* shape = new btCapsuleShapeZ(btScalar(2), size);
 	btTransform transform;
 	transform.setIdentity();
 
