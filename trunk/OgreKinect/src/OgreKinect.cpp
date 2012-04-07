@@ -70,6 +70,7 @@ void OgreKinect::createScene(void)
 	ogreDisplay = new OgreDisplay(dynamicsWorld);
 	ragdoll = new SkeletonToRagdoll(mSceneMgr);
 	ragdoll->createRagdoll(dynamicsWorld, character->getEntityNode());
+	ragdoll->setDebugBones(false);
 	
 	// Floor
 	Ogre::MeshManager::getSingleton().createPlane("floor", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -140,10 +141,76 @@ bool OgreKinect::frameRenderingQueued(const Ogre::FrameEvent& arg)
 			//std::string name = ragdoll->update();
 			//if(name != "") name = name;
 		}
-
 	}
 	
 	return true;
+}
+
+//-------------------------------------------------------------------------------------
+bool OgreKinect::mouseMoved( const OIS::MouseEvent &arg )
+{
+	// comment this
+	//if(!BaseApplication::mouseMoved(arg)) { return false; }
+	if (mTrayMgr->injectMouseMove(arg)) return true;
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------
+bool OgreKinect::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+{
+	if(!BaseApplication::mousePressed(arg, id)) {return false; }
+
+
+	Ogre::Real offsetX = arg.state.X.abs / float(arg.state.width);
+	Ogre::Real offsetY = arg.state.Y.abs / float(arg.state.height);
+
+	if(id == OIS::MB_Left)
+	{	
+		shootBall(offsetX,offsetY);
+	}
+	else if(id == OIS::MB_Right)
+	{	
+	}
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------
+bool OgreKinect::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+{
+	if(!BaseApplication::mouseReleased(arg, id)) { return false; }
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------
+void OgreKinect::shootBall(float mouseScreenX, float mouseScreenY)
+{
+	Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(mouseScreenX, mouseScreenY);
+	char name[256];
+	sprintf(name,"%d", numBalls++);
+
+	Ogre::Entity* ball = mSceneMgr->createEntity(name, "sphere.mesh");
+	Ogre::SceneNode* ballNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+	ballNode->setPosition(mouseRay.getOrigin());
+	ballNode->attachObject(ball);
+	ballNode->setScale(10, 10, 10);
+
+	float radius = 5;
+	btSphereShape* collisionShape = new btSphereShape(radius);
+	btTransform startTransform; 
+	float friction = 10;
+	btScalar mass = 10;
+	startTransform.setIdentity();
+	startTransform.setOrigin(btVector3(ballNode->getPosition().x,ballNode->getPosition().y,ballNode->getPosition().z) );
+	btDefaultMotionState* triMotionState = new btDefaultMotionState(startTransform);
+	btVector3 localInertia;
+	collisionShape->calculateLocalInertia(mass,localInertia); 
+	btRigidBody::btRigidBodyConstructionInfo rbInfo=btRigidBody::btRigidBodyConstructionInfo(mass, triMotionState, collisionShape, localInertia);
+	btRigidBody* triBody = new btRigidBody(rbInfo);
+	ogreDisplay->createDynamicObject(ball,triBody);
+	triBody->applyImpulse(btVector3(mouseRay.getDirection().x,mouseRay.getDirection().y,mouseRay.getDirection().z)*2000,btVector3(0,0,0));
 }
 
 
