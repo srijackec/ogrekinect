@@ -60,6 +60,12 @@ protected:
 	virtual bool frameRenderingQueued(const Ogre::FrameEvent& arg);
 
 	void setUpKinect();
+	void shootBall(float mouseScreenX, float mouseScreenY);
+
+	// OIS::MouseListener
+	virtual bool mouseMoved(const OIS::MouseEvent& arg);
+	virtual bool mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
+	virtual bool mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
 };
 
 #endif // #ifndef __OgreKinect_h_

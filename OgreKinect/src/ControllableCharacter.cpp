@@ -31,6 +31,7 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 	this->bodyNode->translate(Ogre::Vector3(0, 25, 0));
 			
 	// debug
+	/*
 	for(int i = 0; i < this->bodyEntity->getNumSubEntities(); i++)
 	{
 		Ogre::SubEntity* sub = this->bodyEntity->getSubEntity(i);
@@ -38,7 +39,7 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 		mat->setSceneBlending(Ogre::SceneBlendType::SBT_TRANSPARENT_COLOUR);
 		mat->setCullingMode(Ogre::CullingMode::CULL_CLOCKWISE);
 	}
-	
+	*/
 	skeleton = this->bodyEntity->getSkeleton();	
 	skeleton->setBlendMode(Ogre::ANIMBLEND_CUMULATIVE);
 
@@ -65,27 +66,6 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 	setupBone("SHOULDER_RIGHT",		NuiJointIndex::SHOULDER_RIGHT);
 	setupBone("ELBOW_RIGHT",		NuiJointIndex::ELBOW_RIGHT);
 	//setupBone("WRIST_RIGHT",		NuiJointIndex::WRIST_RIGHT);
-	
-	/*
-	setupBone("Joint1",		NuiJointIndex::HIP_CENTER);
-	setupBone("Joint2",		NuiJointIndex::HIP_LEFT);
-	setupBone("Joint3",		NuiJointIndex::KNEE_LEFT);
-	setupBone("Joint4",		NuiJointIndex::ANKLE_LEFT);
-	setupBone("Joint5",		NuiJointIndex::FOOT_LEFT);
-	setupBone("Joint6",		NuiJointIndex::HIP_RIGHT);
-	setupBone("Joint7",		NuiJointIndex::KNEE_RIGHT);
-	setupBone("Joint8",		NuiJointIndex::ANKLE_RIGHT);
-	setupBone("Joint9",		NuiJointIndex::FOOT_RIGHT);
-	setupBone("Joint10",	NuiJointIndex::SPINE);
-	setupBone("Joint11",	NuiJointIndex::SHOULDER_CENTER);
-	setupBone("Joint12",	NuiJointIndex::HEAD);
-	setupBone("Joint13",	NuiJointIndex::SHOULDER_LEFT);
-	setupBone("Joint14",	NuiJointIndex::ELBOW_LEFT);
-	setupBone("Joint15",	NuiJointIndex::WRIST_LEFT);
-	setupBone("Joint16",	NuiJointIndex::SHOULDER_RIGHT);
-	setupBone("Joint17",	NuiJointIndex::ELBOW_RIGHT);
-	setupBone("Joint18",	NuiJointIndex::WRIST_RIGHT);
-	*/
 }
 
 //-------------------------------------------------------------------------------------
@@ -107,29 +87,6 @@ void ControllableCharacter::updatePerFrame(Ogre::Real elapsedTime)
 	transformBone("SHOULDER_RIGHT",	NuiJointIndex::SHOULDER_RIGHT);
 	transformBone("ELBOW_RIGHT",	NuiJointIndex::ELBOW_RIGHT);
 	//transformBone("WRIST_RIGHT",	NuiJointIndex::WRIST_RIGHT);
-	
-
-	/*
-	transformBone("Joint1",		NuiJointIndex::HIP_CENTER);
-	transformBone("Joint2",		NuiJointIndex::HIP_LEFT);
-	transformBone("Joint3",		NuiJointIndex::KNEE_LEFT);
-	transformBone("Joint4",		NuiJointIndex::ANKLE_LEFT);
-	transformBone("Joint5",		NuiJointIndex::FOOT_LEFT);
-	transformBone("Joint6",		NuiJointIndex::HIP_RIGHT);
-	transformBone("Joint7",		NuiJointIndex::KNEE_RIGHT);
-	transformBone("Joint8",		NuiJointIndex::ANKLE_RIGHT);
-	transformBone("Joint9",		NuiJointIndex::FOOT_RIGHT);
-	transformBone("Joint10",	NuiJointIndex::SPINE);
-	transformBone("Joint11",	NuiJointIndex::SHOULDER_CENTER);
-	transformBone("Joint12",	NuiJointIndex::HEAD);
-	transformBone("Joint13",	NuiJointIndex::SHOULDER_LEFT);
-	transformBone("Joint14",	NuiJointIndex::ELBOW_LEFT);
-	transformBone("Joint15",	NuiJointIndex::WRIST_LEFT);
-	transformBone("Joint16",	NuiJointIndex::SHOULDER_RIGHT);
-	transformBone("Joint17",	NuiJointIndex::ELBOW_RIGHT);
-	transformBone("Joint18",	NuiJointIndex::WRIST_RIGHT);
-	*/
-
 }
 
 //-------------------------------------------------------------------------------------
