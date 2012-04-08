@@ -54,10 +54,7 @@ std::string SkeletonToRagdoll::update()
 	
 	for(int i = 0; i < skeleton->getNumBones(); i++)
 	{
-		btVector3 bonePosition = btVector3(btBones[i].second->_getDerivedPosition().x, btBones[i].second->_getDerivedPosition().y, btBones[i].second->_getDerivedPosition().z);
-		Ogre::Vector3 bonePos = skeletonNode->_getDerivedOrientation() * btBones[i].second->_getDerivedPosition() * scale + skeletonNode->_getDerivedPosition();
-		btTransform tr;
-		tr.setIdentity();
+		
 
 		if(i > 0)
 		{
