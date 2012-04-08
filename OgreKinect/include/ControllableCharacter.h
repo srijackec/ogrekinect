@@ -32,6 +32,9 @@ protected:
 	bool showBoneOrientationAxes;
 	bool showJointYAxes;
 
+	Ogre::Real skelCenter;
+	Ogre::Vector3 bodyOffset;
+
 	Ogre::SceneManager *mSceneManager;	
 	Ogre::Entity* bodyEntity;
 	Ogre::SceneNode* bodyNode;

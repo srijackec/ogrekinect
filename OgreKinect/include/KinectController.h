@@ -26,6 +26,7 @@ public:
 	NUI_SKELETON_DATA* getSkeletonData();
 	Ogre::Vector3 getJointPosition(NuiManager::NuiJointIndex idx);
 	NuiSkeletonPositionTrackingState getJointStatus(NuiManager::NuiJointIndex idx);
+	NuiSkeletonTrackingState getSkeletonStatus();
 
 	void showColorData(Ogre::TexturePtr texRenderTarget);
 

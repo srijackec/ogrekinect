@@ -6,6 +6,9 @@
 ControllableCharacter::ControllableCharacter(void)
 {
 	this->showBoneOrientationAxes = false;	// debug
+
+	this->skelCenter = 10000.0f;
+	this->bodyOffset = Ogre::Vector3(0, 25, 0);
 }
 
 //-------------------------------------------------------------------------------------
@@ -28,7 +31,7 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 	this->bodyNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
 	this->bodyNode->attachObject(bodyEntity);
 	this->bodyNode->scale(Ogre::Vector3(5));
-	this->bodyNode->translate(Ogre::Vector3(0, 25, 0));
+	this->bodyNode->setPosition(bodyOffset);
 			
 	// debug
 	/*
@@ -91,7 +94,38 @@ void ControllableCharacter::setupCharacter(Ogre::SceneManager* mSceneManager, Ki
 void ControllableCharacter::updatePerFrame(Ogre::Real elapsedTime)
 {
 	using namespace NuiManager;
+
+	if(controller->getSkeletonStatus() != NuiSkeletonTrackingState::SKELETON_TRACKED) return;
+
+	Ogre::Real yLeftSoulder = controller->getJointPosition(SHOULDER_LEFT).y;
+	Ogre::Real yRightShoulder = controller->getJointPosition(SHOULDER_RIGHT).y;	
+	Ogre::Real yCurSkelCenter = (yLeftSoulder < yRightShoulder) ? yLeftSoulder : yRightShoulder;
+	//Ogre::Real shoulderPos = (lShoulderPos <= rShoulderPos) ? lShoulderPos : rShoulderPos;
+	//Ogre::Real curSkelHeight = shoulderPos;
+	//Ogre::Real curSkelHeight = controller->getJointPosition(SHOULDER_CENTER).y + shoulderPos / 2.0f;
+
+	Ogre::Real dif = yCurSkelCenter - skelCenter;
+	Ogre::Vector3 bodyPos = bodyNode->getPosition();
+
+	if(dif <= -25 || dif > 25)
+	{
+	}
+	else if(dif >= 0.02f || dif <= -0.02f) 
+	{
+		Ogre::Real yTranslation = dif * 10000 * elapsedTime;		
+		if((yTranslation + bodyOffset.y) < bodyOffset.y) yTranslation = 0;
+		bodyNode->translate(Ogre::Vector3(0, yTranslation, 0));
+	}
+	else
+	{	
+		if(bodyPos.y <= (bodyOffset.y + 0.1f) && bodyPos.y >= (bodyOffset.y - 0.1f)) bodyNode->setPosition(bodyOffset);
+		else if(bodyPos.y > bodyOffset.y) bodyNode->translate(Ogre::Vector3(0, -50 * elapsedTime, 0));
+		else if (bodyPos.y < bodyOffset.y) bodyNode->translate(Ogre::Vector3(0, 100 * elapsedTime, 0));
+	}
+
+	skelCenter = yCurSkelCenter;
 	
+
 	if(!jointCalc->getMirror())
 	{
 		transformBone("HIP_CENTER",			NuiJointIndex::HIP_CENTER);
@@ -159,13 +193,8 @@ void ControllableCharacter::setupBone(const Ogre::String& name, NuiJointIndex id
 	if(name != "WRIST_RIGHT" && name != "WRIST_RIGHT")
 		bone->setInheritOrientation(false);
 
-	//bone->resetToInitialState();
 	bone->resetOrientation();
-
-	//Ogre::Quaternion q;
-	//q.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_Y);
-	//bone->setOrientation(q);
-
+	
 	Ogre::Quaternion q = Ogre::Quaternion::IDENTITY;
 	bone->setOrientation(q);
 

@@ -63,7 +63,14 @@ void KinectController::updatePerFrame(Ogre::Real elapsedTime)
 }
 
 //-------------------------------------------------------------------------------------
-void  KinectController::showColorData(Ogre::TexturePtr texRenderTarget)
+NuiSkeletonTrackingState KinectController::getSkeletonStatus()
+{
+	NuiSkeletonTrackingState state = (NuiSkeletonTrackingState)kinectManager->getSkeleton(player1Index)->eTrackingState;
+	return state;
+}
+
+//-------------------------------------------------------------------------------------
+void KinectController::showColorData(Ogre::TexturePtr texRenderTarget)
 {	
 }
 
