@@ -40,8 +40,6 @@ void KinectController::unInitController(void)
 //-------------------------------------------------------------------------------------
 void KinectController::updatePerFrame(Ogre::Real elapsedTime)
 {
-	
-
 	if(player1State == NuiSkeletonTrackingState::SKELETON_NOT_TRACKED)		// not tracked
 	{
 		// find new player
@@ -90,7 +88,12 @@ Ogre::Vector3 KinectController::convertToOgreVector3(Vector4 nuiVector)
 //-------------------------------------------------------------------------------------
 Ogre::Vector3 KinectController::getJointPosition(NuiManager::NuiJointIndex idx)
 {
-	return this->convertToOgreVector3(this->getSkeletonData()->SkeletonPositions[idx]);
+	Ogre::Vector3 jointPos = this->convertToOgreVector3(this->getSkeletonData()->SkeletonPositions[idx]);
+	//jointPos.x *= -1;
+
+	return jointPos;
+
+	//return this->convertToOgreVector3(this->getSkeletonData()->SkeletonPositions[idx]);
 }
 
 //-------------------------------------------------------------------------------------

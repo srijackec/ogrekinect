@@ -161,13 +161,12 @@ bool OgreKinect::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id
 {
 	if(!BaseApplication::mousePressed(arg, id)) {return false; }
 
-
 	Ogre::Real offsetX = arg.state.X.abs / float(arg.state.width);
 	Ogre::Real offsetY = arg.state.Y.abs / float(arg.state.height);
 
 	if(id == OIS::MB_Left)
 	{	
-		shootBall(offsetX,offsetY);
+		shootBall(offsetX, offsetY);
 	}
 	else if(id == OIS::MB_Right)
 	{	

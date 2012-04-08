@@ -3,26 +3,27 @@
 #include "JointOrientationCalculator.h"
 
 //-------------------------------------------------------------------------------------
-NuiManager::JointOrientationCalculator::JointOrientationCalculator(void)
+JointOrientationCalculator::JointOrientationCalculator(void) :
+	isMirror(true)
 {
 
 }
 
 //-------------------------------------------------------------------------------------
-NuiManager::JointOrientationCalculator::~JointOrientationCalculator(void)
+JointOrientationCalculator::~JointOrientationCalculator(void)
 {
 
 }
 
 //-------------------------------------------------------------------------------------
-void NuiManager::JointOrientationCalculator::setupController(KinectController* controller)
+void JointOrientationCalculator::setupController(KinectController* controller)
 {
 	this->controller = controller;
 }
 
 //-------------------------------------------------------------------------------------
 // check whether the two vectors lie in the same line (and also parallel)
-bool NuiManager::JointOrientationCalculator::areNearCollinear(Ogre::Vector3 v1, Ogre::Vector3 v2)
+bool JointOrientationCalculator::areNearCollinear(Ogre::Vector3 v1, Ogre::Vector3 v2)
 {
 	v1.normalise();
 	v2.normalise();
@@ -33,7 +34,7 @@ bool NuiManager::JointOrientationCalculator::areNearCollinear(Ogre::Vector3 v1, 
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Vector3 NuiManager::JointOrientationCalculator::getDirection(NuiManager::NuiJointIndex p1, NuiManager::NuiJointIndex p2)
+Ogre::Vector3 JointOrientationCalculator::getDirection(NuiManager::NuiJointIndex p1, NuiManager::NuiJointIndex p2)
 {
 	Ogre::Vector3 pVec1 = controller->getJointPosition(p1);
 	Ogre::Vector3 pVec2 = controller->getJointPosition(p2);
@@ -42,26 +43,47 @@ Ogre::Vector3 NuiManager::JointOrientationCalculator::getDirection(NuiManager::N
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::buildQuaternion(Ogre::Vector3 xAxis, Ogre::Vector3 yAxis, Ogre::Vector3 zAxis)
+Ogre::Quaternion JointOrientationCalculator::buildQuaternion(Ogre::Vector3 xAxis, Ogre::Vector3 yAxis, Ogre::Vector3 zAxis)
 {
-	Ogre::Matrix3 mat(xAxis.x, -yAxis.x, zAxis.x,
-					  -xAxis.y, yAxis.y, -zAxis.y,
-					  xAxis.z, -yAxis.z, zAxis.z);
+
+	Ogre::Matrix3 mat;
+
+	if(isMirror)
+	{
+		mat = Ogre::Matrix3(xAxis.x, yAxis.x, zAxis.x,
+						    xAxis.y, yAxis.y, zAxis.y,
+						    xAxis.z, yAxis.z, zAxis.z);
+
+		Ogre::Matrix3 flipMat(1, 0,  0,
+							  0, 1,  0,
+							  0, 0, -1);
+
+		mat = flipMat * mat * flipMat;
+	}
+	else
+	{
+
+		mat = Ogre::Matrix3(xAxis.x, -yAxis.x, zAxis.x,
+						   -xAxis.y, yAxis.y, -zAxis.y,
+						   xAxis.z,  -yAxis.z, zAxis.z);
+	}
 
 	Ogre::Quaternion q;
 	q.FromRotationMatrix(mat);
 	
+	
+
 	return q;
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromX(Ogre::Vector3 v1)
+Ogre::Quaternion JointOrientationCalculator::makeOrientationFromX(Ogre::Vector3 v1)
 {
 	// matrix column
 	Ogre::Vector3 xCol;
 	Ogre::Vector3 yCol;
 	Ogre::Vector3 zCol;
-
+	
 	xCol = v1.normalisedCopy();
 
 	yCol.x = 0.0f;
@@ -76,7 +98,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromX(Og
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromY(Ogre::Vector3 v1)
+Ogre::Quaternion JointOrientationCalculator::makeOrientationFromY(Ogre::Vector3 v1)
 {
 	// matrix column
 	Ogre::Vector3 xCol;
@@ -97,7 +119,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromY(Og
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromZ(Ogre::Vector3 v1)
+Ogre::Quaternion JointOrientationCalculator::makeOrientationFromZ(Ogre::Vector3 v1)
 {
 	// matrix column
 	Ogre::Vector3 xCol;
@@ -118,7 +140,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromZ(Og
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromXY(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized)
+Ogre::Quaternion JointOrientationCalculator::makeOrientationFromXY(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized)
 {
 	// matrix column
 	Ogre::Vector3 xCol;
@@ -136,13 +158,13 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromXY(O
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromYX(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized)
+Ogre::Quaternion JointOrientationCalculator::makeOrientationFromYX(Ogre::Vector3 xUnnormalized, Ogre::Vector3 yUnnormalized)
 {
 	// matrix column
 	Ogre::Vector3 xCol;
 	Ogre::Vector3 yCol;
 	Ogre::Vector3 zCol;
-
+	
 	Ogre::Vector3 xn = xUnnormalized.normalisedCopy();
 	Ogre::Vector3 yn = yUnnormalized.normalisedCopy();
 
@@ -154,7 +176,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromYX(O
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromYZ(Ogre::Vector3 yUnnormalized, Ogre::Vector3 zUnnormalized)
+Ogre::Quaternion JointOrientationCalculator::makeOrientationFromYZ(Ogre::Vector3 yUnnormalized, Ogre::Vector3 zUnnormalized)
 {
 	// matrix column
 	Ogre::Vector3 xCol;
@@ -172,7 +194,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::makeOrientationFromYZ(O
 }
 
 //-------------------------------------------------------------------------------------
-Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrientation(NuiManager::NuiJointIndex idx)
+Ogre::Quaternion JointOrientationCalculator::getSkeletonJointOrientation(NuiManager::NuiJointIndex idx)
 {
 	Ogre::Quaternion orientation;
 	
@@ -191,7 +213,7 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 			//vy = this->getDirection(NuiJointIndex::HIP_CENTER,	NuiJointIndex::SPINE);
 			vy = Ogre::Vector3::UNIT_Y;		
 
-			orientation = this->makeOrientationFromXY(vx, vy);
+			orientation = this->makeOrientationFromYX(vx, vy);
 		}
 		break;
 
@@ -238,16 +260,20 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 	case NuiJointIndex::ELBOW_LEFT:			/*5*/
 		{
 			vy = this->getDirection(NuiJointIndex::WRIST_LEFT,		NuiJointIndex::ELBOW_LEFT);
-			vx = Ogre::Vector3::UNIT_X;
-			orientation = this->makeOrientationFromYX(vx, vy);
+			//vx = Ogre::Vector3::UNIT_X;
+			//orientation = this->makeOrientationFromYX(vx, vy);
+			vz = Ogre::Vector3::UNIT_Z;
+			orientation = this->makeOrientationFromYZ(vy, vz);
 		}
 		break;
 
 	case NuiJointIndex::ELBOW_RIGHT:		/*9*/
 		{
 			vy = this->getDirection(NuiJointIndex::WRIST_RIGHT,		NuiJointIndex::ELBOW_RIGHT);
-			vx = Ogre::Vector3::UNIT_X;
-			orientation = this->makeOrientationFromYX(vx, vy);
+			//vx = Ogre::Vector3::UNIT_X;
+			//orientation = this->makeOrientationFromYX(vx, vy);
+			vz = Ogre::Vector3::UNIT_Z;
+			orientation = this->makeOrientationFromYZ(vy, vz);
 		}
 		break;
 
@@ -344,4 +370,16 @@ Ogre::Quaternion NuiManager::JointOrientationCalculator::getSkeletonJointOrienta
 	}
 
 	return orientation;
+}
+
+//-------------------------------------------------------------------------------------
+void JointOrientationCalculator::setMirror(bool isMirror)
+{
+	this->isMirror = isMirror;
+}
+
+//-------------------------------------------------------------------------------------
+bool JointOrientationCalculator::getMirror(void)
+{
+	return isMirror;
 }
