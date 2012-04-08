@@ -83,7 +83,8 @@ void OgreKinect::createScene(void)
 
 	// create the Bullet ground plane
 	
-	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0), 1);
+	//btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0), 1);
+	/*btCollisionShape* groundShape = new btBoxShape(btVector3(350, 1, 350));
 	btTransform groundTransform;
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(0, 0, 0));
@@ -92,7 +93,7 @@ void OgreKinect::createScene(void)
 	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
 	groundRigidBody->setFriction(50.0f);
 	dynamicsWorld->addRigidBody(groundRigidBody);
-	ragdoll->addIgnoreEventObject(groundRigidBody);
+	ragdoll->addIgnoreEventObject(groundRigidBody);*/
 	
 	// Color Data	
 	/*texRenderTarget = Ogre::TextureManager::getSingleton().createManual("texRenderTarget", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -150,7 +151,7 @@ bool OgreKinect::frameRenderingQueued(const Ogre::FrameEvent& arg)
 bool OgreKinect::mouseMoved( const OIS::MouseEvent &arg )
 {
 	// comment this
-	//if(!BaseApplication::mouseMoved(arg)) { return false; }
+	if(!BaseApplication::mouseMoved(arg)) { return false; }
 	if (mTrayMgr->injectMouseMove(arg)) return true;
 
 	return true;
@@ -190,11 +191,11 @@ void OgreKinect::shootBall(float mouseScreenX, float mouseScreenY)
 	char name[256];
 	sprintf(name,"%d", numBalls++);
 
-	Ogre::Entity* ball = mSceneMgr->createEntity(name, "sphere.mesh");
+	Ogre::Entity* ball = mSceneMgr->createEntity(name, "face.mesh");
 	Ogre::SceneNode* ballNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
 	ballNode->setPosition(mouseRay.getOrigin());
 	ballNode->attachObject(ball);
-	ballNode->setScale(10, 10, 10);
+	ballNode->setScale(8, 8, 8);
 
 	float radius = 5;
 	btSphereShape* collisionShape = new btSphereShape(radius);
